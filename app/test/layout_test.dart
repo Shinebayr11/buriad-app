@@ -1,7 +1,9 @@
 import 'package:buriad_app/main.dart';
 import 'package:buriad_app/models/genre.dart';
+import 'package:buriad_app/screens/auth_screen.dart';
 import 'package:buriad_app/screens/edit_screen.dart';
 import 'package:buriad_app/screens/guess_screen.dart';
+import 'package:buriad_app/screens/landing_screen.dart';
 import 'package:buriad_app/screens/pairs_screen.dart';
 import 'package:buriad_app/screens/story_list_screen.dart';
 import 'package:buriad_app/state/game_state.dart';
@@ -38,13 +40,19 @@ void main() {
   }
 
   sizes.forEach((name, size) {
-    testWidgets('$name дээр нүүр халилтгүй', (tester) async {
+    testWidgets('$name дээр угтах хуудас ба нүүр халилтгүй', (tester) async {
       useSize(tester, size);
       final state = await newState();
       await tester.pumpWidget(BuriadApp(state: state));
       await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull, reason: 'угтах хуудас');
 
-      expect(tester.takeException(), isNull);
+      // Намхан дэлгэцэд товч гүйлгэх хэсэгт байж болно.
+      await tester.ensureVisible(find.text('Бүртгэлгүйгээр үзэх'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Бүртгэлгүйгээр үзэх'));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull, reason: 'нүүр');
       expect(find.text('ТОГЛООМ'), findsOneWidget);
     });
   });
@@ -57,6 +65,9 @@ void main() {
         'Хос олох': PairsScreen(state: state),
         'Үг нэмэх': EditScreen(state: state),
         'Үлгэр': StoryListScreen(state: state, genre: Genre.ulger),
+        'Нэвтрэх': AuthScreen(state: state, signUp: false),
+        'Бүртгүүлэх': AuthScreen(state: state, signUp: true),
+        'Угтах': LandingScreen(state: state),
       };
 
       for (final page in pages.entries) {

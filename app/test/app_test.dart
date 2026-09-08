@@ -44,6 +44,9 @@ void main() {
     await state.init();
     await tester.pumpWidget(BuriadApp(state: state));
     await tester.pumpAndSettle();
+    // Угтах хуудаснаас нүүр рүү.
+    await tester.tap(find.text('Бүртгэлгүйгээр үзэх'));
+    await tester.pumpAndSettle();
     return state;
   }
 
@@ -55,19 +58,20 @@ void main() {
   }
 
   group('Нүүр дэлгэц', () {
-    testWidgets('ачаалж байх үед мэдэгдэл гарч, дараа нь нүүр солигдоно',
+    testWidgets('угтах хуудаснаас нүүр рүү орно',
         (tester) async {
       final state =
           GameState(FakeStore(sampleWords()), stories: FakeStoryStore());
       await tester.pumpWidget(BuriadApp(state: state));
 
-      expect(find.text('Ачааллаж байна...'), findsOneWidget);
-      expect(find.text('ТОГЛООМ'), findsNothing);
+      expect(find.text('Ачааллаж байна...'), findsNothing,
+          reason: 'угтах хуудас өгөгдөл хүлээхгүй');
+      expect(find.text('Бүртгэлгүйгээр үзэх'), findsOneWidget);
 
       await state.init();
+      await tester.tap(find.text('Бүртгэлгүйгээр үзэх'));
       await tester.pumpAndSettle();
 
-      expect(find.text('Ачааллаж байна...'), findsNothing);
       expect(find.text('ТОГЛООМ'), findsOneWidget);
       expect(tester.binding.transientCallbackCount, 0,
           reason: 'ачаалсны дараа анимаци эргэлдэж үлдэх ёсгүй');
@@ -94,6 +98,88 @@ void main() {
       }
       expect(find.text('хоосон'), findsNWidgets(4),
           reason: 'бичлэг ороогүй тул дөрвүүлээ хоосон');
+    });
+  });
+
+  group('Угтах хуудас', () {
+    Future<GameState> pumpLanding(WidgetTester tester) async {
+      final state =
+          GameState(FakeStore(sampleWords()), stories: FakeStoryStore());
+      await state.init();
+      await tester.pumpWidget(BuriadApp(state: state));
+      await tester.pumpAndSettle();
+      return state;
+    }
+
+    testWidgets('гарчиг, гурван сонголт харагдана', (tester) async {
+      await pumpLanding(tester);
+
+      expect(find.text('Буриад үг'), findsOneWidget);
+      expect(find.text('ХЭЛ · АМАН ЗОХИОЛ · ӨВ'), findsOneWidget);
+      expect(find.text('Нэвтрэх'), findsOneWidget);
+      expect(find.text('Бүртгүүлэх'), findsOneWidget);
+      expect(find.text('Бүртгэлгүйгээр үзэх'), findsOneWidget);
+    });
+
+    testWidgets('Бүртгүүлэх дарахад нэр, и-мэйл, нууц үг гарна',
+        (tester) async {
+      await pumpLanding(tester);
+      await tapVisible(tester, find.text('Бүртгүүлэх'));
+
+      expect(find.text('НЭР'), findsOneWidget);
+      expect(find.text('И-МЭЙЛ'), findsOneWidget);
+      expect(find.text('НУУЦ ҮГ'), findsOneWidget);
+    });
+
+    testWidgets('Нэвтрэх дээр нэрийн талбар байхгүй', (tester) async {
+      await pumpLanding(tester);
+      await tapVisible(tester, find.text('Нэвтрэх'));
+
+      expect(find.text('НЭР'), findsNothing);
+      expect(find.byType(TextField), findsNWidgets(2));
+    });
+
+    testWidgets('и-мэйл буруу бол алдаа заана', (tester) async {
+      await pumpLanding(tester);
+      await tapVisible(tester, find.text('Нэвтрэх'));
+
+      await typeInto(tester, 0, 'буруу-хаяг');
+      await typeInto(tester, 1, 'нууцүг12345');
+      await tapVisible(tester, find.widgetWithText(FilledButton, 'Нэвтрэх'));
+
+      expect(find.text('И-мэйл хаяг буруу байна.'), findsOneWidget);
+    });
+
+    testWidgets('нууц үг богино бол алдаа заана', (tester) async {
+      await pumpLanding(tester);
+      await tapVisible(tester, find.text('Нэвтрэх'));
+
+      await typeInto(tester, 0, 'name@example.com');
+      await typeInto(tester, 1, 'богино');
+      await tapVisible(tester, find.widgetWithText(FilledButton, 'Нэвтрэх'));
+
+      expect(find.textContaining('дор хаяж 8 тэмдэгт'), findsWidgets);
+    });
+
+    testWidgets('бүрэн бөглөвөл сервер хараахан байхгүйг мэдэгдэнэ',
+        (tester) async {
+      await pumpLanding(tester);
+      await tapVisible(tester, find.text('Нэвтрэх'));
+
+      await typeInto(tester, 0, 'name@example.com');
+      await typeInto(tester, 1, 'нууцүг12345');
+      await tapVisible(tester, find.widgetWithText(FilledButton, 'Нэвтрэх'));
+
+      expect(find.textContaining('Сервер хараахан холбогдоогүй'),
+          findsOneWidget);
+    });
+
+    testWidgets('нэвтрэлтээс бүртгэлгүйгээр нүүр рүү орно', (tester) async {
+      await pumpLanding(tester);
+      await tapVisible(tester, find.text('Нэвтрэх'));
+      await tapVisible(tester, find.text('Бүртгэлгүйгээр үзэх'));
+
+      expect(find.text('ТОГЛООМ'), findsOneWidget);
     });
   });
 

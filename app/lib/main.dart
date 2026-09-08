@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'data/word_store.dart';
-import 'screens/home_screen.dart';
+import 'screens/landing_screen.dart';
 import 'state/game_state.dart';
 import 'theme.dart';
 
@@ -45,7 +45,7 @@ class BuriadApp extends StatelessWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      home: HomeScreen(state: state),
+      home: LandingScreen(state: state),
     );
   }
 }

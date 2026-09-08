@@ -57,18 +57,38 @@ void main() {
     return state;
   }
 
+  /// Угтах хуудсаар дамжиж нүүр рүү.
+  Future<GameState> pumpHome(WidgetTester tester) async {
+    final state = await pump(tester);
+    await tester.tap(find.text('Бүртгэлгүйгээр үзэх'));
+    await tester.pumpAndSettle();
+    return state;
+  }
+
   Future<void> shoot(WidgetTester tester, String name) => expectLater(
         find.byType(BuriadApp),
         matchesGoldenFile('goldens/$name.png'),
       );
 
-  testWidgets('Нүүр', (tester) async {
+  testWidgets('Угтах хуудас', (tester) async {
     await pump(tester);
+    await shoot(tester, 'landing');
+  });
+
+  testWidgets('Бүртгүүлэх', (tester) async {
+    await pump(tester);
+    await tester.tap(find.text('Бүртгүүлэх'));
+    await tester.pumpAndSettle();
+    await shoot(tester, 'signup');
+  });
+
+  testWidgets('Нүүр', (tester) async {
+    await pumpHome(tester);
     await shoot(tester, 'home');
   });
 
   testWidgets('Тааварлах', (tester) async {
-    final state = await pump(tester);
+    final state = await pumpHome(tester);
     await tester.tap(find.text('Тааварлах'));
     await tester.pumpAndSettle();
     state.answer(state.q!.opts.first);
@@ -77,21 +97,21 @@ void main() {
   });
 
   testWidgets('Хос олох', (tester) async {
-    await pump(tester);
+    await pumpHome(tester);
     await tester.tap(find.text('Хос олох'));
     await tester.pumpAndSettle();
     await shoot(tester, 'pairs');
   });
 
   testWidgets('Үг нэмэх', (tester) async {
-    await pump(tester);
+    await pumpHome(tester);
     await tester.tap(find.text('Үг нэмэх, засах'));
     await tester.pumpAndSettle();
     await shoot(tester, 'edit');
   });
 
   testWidgets('Ангиллын хоосон төлөв', (tester) async {
-    await pump(tester);
+    await pumpHome(tester);
     await tester.tap(find.text('Үлгэр'));
     await tester.pumpAndSettle();
     await shoot(tester, 'genre_empty');
