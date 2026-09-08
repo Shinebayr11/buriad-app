@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../state/game_state.dart';
 import '../theme.dart';
-import '../widgets/yohor_ring.dart';
+import '../widgets/yohor_line.dart';
 import 'edit_screen.dart';
 import 'guess_screen.dart';
 import 'pairs_screen.dart';
@@ -47,59 +47,43 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         child: SafeArea(
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              return ListenableBuilder(
-                listenable: state,
-                builder: (context, _) {
-                  switch (state.load) {
-                    case LoadState.loading:
-                      return const _Status('Ачааллаж байна...');
-                    case LoadState.failed:
-                      return const _Status('Үгийн санг уншиж чадсангүй.');
-                    case LoadState.ready:
-                      break;
-                  }
-                  // Намхан дэлгэц дээр (жижиг утас, том системийн үсэг) бөгж
-                  // халин гарахын оронд багасна. Flexible ашиглавал доорх
-                  // Expanded-тэй зайгаа тэн хувааж, тоглоомыг шахдаг.
-                  final h = constraints.maxHeight;
-                  final ringSize = h >= 560
-                      ? 120.0
-                      : (h * .22).clamp(56.0, 120.0);
-
-                  return Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
-                    child: Column(
-                      children: [
-                        _Header(score: state.score),
-                        const SizedBox(height: 2),
-                        YohorRing(
-                          streak: state.streak,
-                          round: GameState.round,
-                          pulse: state.ringDone,
-                          size: ringSize,
-                        ),
-                        const SizedBox(height: 16),
-                        _Tabs(labels: _tabs, index: _tab, onSelect: _select),
-                        const SizedBox(height: 18),
-                        Expanded(
-                          child: IndexedStack(
-                            index: _tab,
-                            children: [
-                              GuessScreen(state: state),
-                              PairsScreen(
-                                key: ValueKey(_pairsGen),
-                                state: state,
-                              ),
-                              EditScreen(state: state),
-                            ],
-                          ),
-                        ),
-                      ],
+          child: ListenableBuilder(
+            listenable: state,
+            builder: (context, _) {
+              switch (state.load) {
+                case LoadState.loading:
+                  return const _Status('Ачааллаж байна...');
+                case LoadState.failed:
+                  return const _Status('Үгийн санг уншиж чадсангүй.');
+                case LoadState.ready:
+                  break;
+              }
+              return Padding(
+                padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
+                child: Column(
+                  children: [
+                    _Header(score: state.score),
+                    const SizedBox(height: 16),
+                    YohorLine(
+                      streak: state.streak,
+                      round: GameState.round,
+                      pulse: state.ringDone,
                     ),
-                  );
-                },
+                    const SizedBox(height: 18),
+                    _Tabs(labels: _tabs, index: _tab, onSelect: _select),
+                    const SizedBox(height: 18),
+                    Expanded(
+                      child: IndexedStack(
+                        index: _tab,
+                        children: [
+                          GuessScreen(state: state),
+                          PairsScreen(key: ValueKey(_pairsGen), state: state),
+                          EditScreen(state: state),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               );
             },
           ),
