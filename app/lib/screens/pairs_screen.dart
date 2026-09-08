@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/word.dart';
 import '../state/game_state.dart';
 import '../theme.dart';
+import '../widgets/home_cards.dart';
 import '../widgets/word_picture.dart';
 
 /// Хос олох (санах ой): 6 үг → 12 карт; зураг ба буриад үгийг нь хослуулна.
@@ -73,9 +74,15 @@ class _PairsScreenState extends State<PairsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (!widget.state.canPair) {
-      return const EmptyNote('Дор хаяж 3 үг нэмнэ үү.');
-    }
+    return SubPage(
+      title: 'Хос олох',
+      child: !widget.state.canPair
+          ? const EmptyNote('Дор хаяж 3 үг нэмнэ үү.')
+          : _grid(),
+    );
+  }
+
+  Widget _grid() {
     return SingleChildScrollView(
       padding: const EdgeInsets.only(top: 4, bottom: 24),
       child: Column(

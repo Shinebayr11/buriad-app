@@ -10,6 +10,7 @@ import '../data/word_store.dart';
 import '../models/word.dart';
 import '../state/game_state.dart';
 import '../theme.dart';
+import '../widgets/home_cards.dart';
 import '../widgets/word_picture.dart';
 
 /// Үг нэмэх (админ): маягт, Ү Ө Һ товчлуур, JSON солилцоо, үгийн жагсаалт.
@@ -156,7 +157,15 @@ class _EditScreenState extends State<EditScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final words = widget.state.words;
+    // Дэлгэц тусдаа маршрут тул төлөвөө өөрөө сонсоно.
+    return ListenableBuilder(
+      listenable: widget.state,
+      builder: (context, _) =>
+          SubPage(title: 'Үг нэмэх', child: _form(widget.state.words)),
+    );
+  }
+
+  Widget _form(List<Word> words) {
     return SingleChildScrollView(
       padding: const EdgeInsets.only(bottom: 32),
       child: Column(

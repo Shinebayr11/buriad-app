@@ -1,4 +1,6 @@
+import 'package:buriad_app/data/story_store.dart';
 import 'package:buriad_app/data/word_store.dart';
+import 'package:buriad_app/models/story.dart';
 import 'package:buriad_app/models/word.dart';
 
 /// Санах ойд ажиллах үгийн сан.
@@ -47,3 +49,19 @@ List<Word> sampleWords() => const [
       Word(b: 'гэр', m: 'гэр', e: '🏠', n: 'Хоёр хэлэнд ижил'),
       Word(b: 'гал', m: 'гал', e: '🔥', n: 'Хоёр хэлэнд ижил'),
     ];
+
+/// Санах ойд ажиллах аман зохиолын сан.
+///
+/// Жинхэнэ StoryStore нь rootBundle-ээс уншдаг; тэр нь widget тестэд
+/// хүлээгдэж буй таймер үлдээж, дараагийн тестийг гацаадаг.
+class FakeStoryStore implements StoryStore {
+  FakeStoryStore([this.stories = const []]);
+
+  final List<Story> stories;
+
+  @override
+  Future<StoryArchive> load() async => StoryArchive(
+        schema: StoryArchive.currentSchema,
+        stories: stories,
+      );
+}

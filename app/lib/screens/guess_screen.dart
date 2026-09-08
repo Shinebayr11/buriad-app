@@ -6,7 +6,9 @@ import 'package:flutter/material.dart';
 import '../models/word.dart';
 import '../state/game_state.dart';
 import '../theme.dart';
+import '../widgets/home_cards.dart';
 import '../widgets/word_picture.dart';
+import '../widgets/yohor_line.dart';
 
 /// Тааварлах: карт, дөрвөн сонголт, дүгнэлт, дараагийн үг.
 class GuessScreen extends StatefulWidget {
@@ -74,13 +76,40 @@ class _GuessScreenState extends State<GuessScreen>
 
   @override
   Widget build(BuildContext context) {
+    // Дэлгэц тусдаа маршрут тул төлөвөө өөрөө сонсоно — нүүрний
+    // ListenableBuilder энд хүрэхгүй.
+    return ListenableBuilder(
+      listenable: widget.state,
+      builder: (context, _) => _page(),
+    );
+  }
+
+  Widget _page() {
     final s = widget.state;
     final q = s.q;
-    if (q == null) {
-      return const EmptyNote(
-        'Тоглохын тулд дор хаяж 4 үг хэрэгтэй.\n«Үг нэмэх» хэсгээс оруулна уу.',
-      );
-    }
+    return SubPage(
+      title: 'Тааварлах',
+      trailing: _Score(score: s.score),
+      child: q == null
+          ? const EmptyNote(
+              'Тоглохын тулд дор хаяж 4 үг хэрэгтэй.\n'
+              '«Үг нэмэх» хэсгээс оруулна уу.',
+            )
+          : Column(
+              children: [
+                YohorLine(
+                  streak: s.streak,
+                  round: GameState.round,
+                  pulse: s.ringDone,
+                ),
+                const SizedBox(height: 16),
+                Expanded(child: _body(s, q)),
+              ],
+            ),
+    );
+  }
+
+  Widget _body(GameState s, Question q) {
     return SingleChildScrollView(
       padding: const EdgeInsets.only(bottom: 24),
       child: Column(
@@ -537,6 +566,35 @@ class _Verdict extends StatelessWidget {
           style: body(size: 13, color: BuriadColors.sutDim),
         ),
       ],
+    );
+  }
+}
+
+/// Толгой дахь оноо.
+class _Score extends StatelessWidget {
+  const _Score({required this.score});
+
+  final int score;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      label: 'Оноо $score',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            '$score',
+            style: display(
+              size: 20,
+              weight: FontWeight.w600,
+              color: BuriadColors.shar,
+            ),
+          ),
+          Text('ОНОО', style: label(size: 10).copyWith(letterSpacing: .8)),
+        ],
+      ),
     );
   }
 }

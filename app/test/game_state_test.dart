@@ -4,6 +4,8 @@ import 'package:buriad_app/state/game_state.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'support/fake_store.dart';
+
 /// Тестэд зориулсан сан — багцын asset болон төхөөрөмжийн хадгалалтад хүрэхгүй.
 class _FakeStore implements WordStore {
   _FakeStore(this.bundled);
@@ -36,21 +38,21 @@ void main() {
 
   test('хадгалсан сан байвал багцынхыг дарж ирнэ', () async {
     final store = _FakeStore(_words(5))..saved = _words(7);
-    final s = GameState(store);
+    final s = GameState(store, stories: FakeStoryStore());
     await s.init();
     expect(s.load, LoadState.ready);
     expect(s.words, hasLength(7));
   });
 
   test('хадгалсан сан байхгүй бол багцынхыг уншина', () async {
-    final s = GameState(_FakeStore(_words(5)));
+    final s = GameState(_FakeStore(_words(5)), stories: FakeStoryStore());
     await s.init();
     expect(s.words, hasLength(5));
     expect(s.q, isNotNull);
   });
 
   test('4-өөс цөөн үгтэй бол асуулт үүсэхгүй', () async {
-    final s = GameState(_FakeStore(_words(3)));
+    final s = GameState(_FakeStore(_words(3)), stories: FakeStoryStore());
     await s.init();
     expect(s.canGuess, isFalse);
     expect(s.q, isNull);
@@ -58,7 +60,7 @@ void main() {
   });
 
   test('асуулт үргэлж 4 сонголттой бөгөөд зөв хариулт нь дотор нь байна', () async {
-    final s = GameState(_FakeStore(_words(10)));
+    final s = GameState(_FakeStore(_words(10)), stories: FakeStoryStore());
     await s.init();
     for (var i = 0; i < 30; i++) {
       final q = s.q!;
@@ -70,7 +72,7 @@ void main() {
   });
 
   test('зөв хариулт 10 оноо нэмнэ, буруу нэмэхгүй', () async {
-    final s = GameState(_FakeStore(_words(6)));
+    final s = GameState(_FakeStore(_words(6)), stories: FakeStoryStore());
     await s.init();
 
     s.answer(s.q!.right);
@@ -87,7 +89,7 @@ void main() {
   });
 
   test('хариулсны дараа хоёр дахь хариулт тоологдохгүй', () async {
-    final s = GameState(_FakeStore(_words(6)));
+    final s = GameState(_FakeStore(_words(6)), stories: FakeStoryStore());
     await s.init();
     s.answer(s.q!.right);
     s.answer(s.q!.opts.firstWhere((o) => !identical(o, s.q!.right)));
@@ -96,7 +98,7 @@ void main() {
   });
 
   test('10 асуултын дараа бөгж болон оноо тэглэгдэнэ', () async {
-    final s = GameState(_FakeStore(_words(6)));
+    final s = GameState(_FakeStore(_words(6)), stories: FakeStoryStore());
     await s.init();
     for (var i = 0; i < GameState.round; i++) {
       s.answer(s.q!.right);
@@ -113,7 +115,7 @@ void main() {
   });
 
   test('карт зөвхөн хариулсны дараа эргэнэ', () async {
-    final s = GameState(_FakeStore(_words(6)));
+    final s = GameState(_FakeStore(_words(6)), stories: FakeStoryStore());
     await s.init();
     s.toggleFlip();
     expect(s.flipped, isFalse);
@@ -124,7 +126,7 @@ void main() {
 
   test('үг нэмэх, устгах бүрд төхөөрөмж дээр хадгална', () async {
     final store = _FakeStore(_words(5));
-    final s = GameState(store);
+    final s = GameState(store, stories: FakeStoryStore());
     await s.init();
 
     await s.addWord(const Word(b: 'шинэ', m: 'new'));
@@ -137,7 +139,7 @@ void main() {
   });
 
   test('3 үгээс 4 болоход асуулт өөрөө үүснэ', () async {
-    final s = GameState(_FakeStore(_words(3)));
+    final s = GameState(_FakeStore(_words(3)), stories: FakeStoryStore());
     await s.init();
     expect(s.q, isNull);
     await s.addWord(const Word(b: 'дөрөв', m: '4'));
@@ -146,7 +148,7 @@ void main() {
 
   test('анхны санг сэргээхэд хадгалсан нь устана', () async {
     final store = _FakeStore(_words(5))..saved = _words(9);
-    final s = GameState(store);
+    final s = GameState(store, stories: FakeStoryStore());
     await s.init();
     expect(s.words, hasLength(9));
 
@@ -156,17 +158,17 @@ void main() {
   });
 
   test('хос олоход хамгийн ихдээ 6 үг сонгоно', () async {
-    final s = GameState(_FakeStore(_words(20)));
+    final s = GameState(_FakeStore(_words(20)), stories: FakeStoryStore());
     await s.init();
     expect(s.pickForPairs(), hasLength(6));
 
-    final few = GameState(_FakeStore(_words(4)));
+    final few = GameState(_FakeStore(_words(4)), stories: FakeStoryStore());
     await few.init();
     expect(few.pickForPairs(), hasLength(4));
   });
 
   test('асуултын чиглэл хоёр тал руу эргэнэ', () async {
-    final s = GameState(_FakeStore(_words(10)));
+    final s = GameState(_FakeStore(_words(10)), stories: FakeStoryStore());
     await s.init();
     final dirs = <bool>{};
     for (var i = 0; i < 60; i++) {

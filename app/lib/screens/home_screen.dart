@@ -1,40 +1,60 @@
 import 'package:flutter/material.dart';
 
+import '../models/genre.dart';
 import '../state/game_state.dart';
 import '../theme.dart';
-import '../widgets/yohor_line.dart';
+import '../widgets/home_cards.dart';
 import 'edit_screen.dart';
 import 'guess_screen.dart';
 import 'pairs_screen.dart';
+import 'story_list_screen.dart';
 
-/// Нүүр дэлгэц: толгой (нэр + оноо), ёохор бөгж, гурван таб.
-class HomeScreen extends StatefulWidget {
+/// Нүүр дэлгэц — аппын гарц. Тоглоом, аман зохиолын ангилал, үгийн сан.
+class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key, required this.state});
 
   final GameState state;
 
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
+  void _open(BuildContext context, Widget page) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (_) => page));
+  }
 
-class _HomeScreenState extends State<HomeScreen> {
-  static const _tabs = ['Тааварлах', 'Хос олох', 'Үг нэмэх'];
-
-  int _tab = 0;
-
-  /// «Хос олох» руу орох бүрд картуудыг дахин холино (вэб: buildPairs()).
-  int _pairsGen = 0;
-
-  void _select(int i) {
-    setState(() {
-      _tab = i;
-      if (i == 1) _pairsGen++;
-    });
+  /// Ангиллын картуудыг хоёр баганаар. IntrinsicHeight нь хосолсон картыг
+  /// ижил өндөртэй болгоно — гүйлгэх жагсаалт дотор stretch дангаараа
+  /// хязгааргүй өндөр өгдөг.
+  Widget _genreGrid(BuildContext context) {
+    final rows = <Widget>[];
+    for (var i = 0; i < Genre.values.length; i += 2) {
+      final pair = Genre.values.skip(i).take(2).toList();
+      if (i > 0) rows.add(const SizedBox(height: 9));
+      rows.add(
+        IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              for (var j = 0; j < pair.length; j++) ...[
+                if (j > 0) const SizedBox(width: 9),
+                Expanded(
+                  child: _GenreCard(
+                    state: state,
+                    genre: pair[j],
+                    onTap: () => _open(
+                      context,
+                      StoryListScreen(state: state, genre: pair[j]),
+                    ),
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+      );
+    }
+    return Column(children: rows);
   }
 
   @override
   Widget build(BuildContext context) {
-    final state = widget.state;
     return Scaffold(
       body: Container(
         // CSS .shell: radial-gradient(120% 60% at 50% -10%, tenger-soft → transparent)
@@ -58,37 +78,106 @@ class _HomeScreenState extends State<HomeScreen> {
                 case LoadState.ready:
                   break;
               }
-              return Padding(
-                padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
-                child: Column(
-                  children: [
-                    _Header(score: state.score),
-                    const SizedBox(height: 16),
-                    YohorLine(
-                      streak: state.streak,
-                      round: GameState.round,
-                      pulse: state.ringDone,
-                    ),
-                    const SizedBox(height: 18),
-                    _Tabs(labels: _tabs, index: _tab, onSelect: _select),
-                    const SizedBox(height: 18),
-                    Expanded(
-                      child: IndexedStack(
-                        index: _tab,
+              return ListView(
+                padding: const EdgeInsets.fromLTRB(16, 14, 16, 28),
+                children: [
+                  const _Mark(),
+                  const SizedBox(height: 26),
+
+                  HomeSection(
+                    title: 'Тоглоом',
+                    child: IntrinsicHeight(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          GuessScreen(state: state),
-                          PairsScreen(key: ValueKey(_pairsGen), state: state),
-                          EditScreen(state: state),
+                          Expanded(
+                            child: HomeCard(
+                              title: 'Тааварлах',
+                              hint: 'Карт харж утгыг нь олно',
+                              meta: '${state.words.length} үг',
+                              accent: true,
+                              onTap: () =>
+                                  _open(context, GuessScreen(state: state)),
+                            ),
+                          ),
+                          const SizedBox(width: 9),
+                          Expanded(
+                            child: HomeCard(
+                              title: 'Хос олох',
+                              hint: 'Зураг, үгийг хослуулна',
+                              meta: 'санах ой',
+                              onTap: () =>
+                                  _open(context, PairsScreen(state: state)),
+                            ),
+                          ),
                         ],
                       ),
                     ),
-                  ],
-                ),
+                  ),
+
+                  HomeSection(title: 'Аман зохиол', child: _genreGrid(context)),
+
+                  HomeSection(
+                    title: 'Үгийн сан',
+                    child: HomeCard(
+                      title: 'Үг нэмэх, засах',
+                      hint: 'Шинэ үг оруулах, JSON солилцох',
+                      meta: '${state.words.length} үг',
+                      onTap: () => _open(context, EditScreen(state: state)),
+                    ),
+                  ),
+                ],
               );
             },
           ),
         ),
       ),
+    );
+  }
+}
+
+class _GenreCard extends StatelessWidget {
+  const _GenreCard({
+    required this.state,
+    required this.genre,
+    required this.onTap,
+  });
+
+  final GameState state;
+  final Genre genre;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final n = state.byGenre(genre).length;
+    return HomeCard(
+      title: genre.title,
+      hint: genre.hint,
+      meta: n == 0 ? 'хоосон' : '$n бичлэг',
+      dim: n == 0,
+      onTap: onTap,
+    );
+  }
+}
+
+class _Mark extends StatelessWidget {
+  const _Mark();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Буриад үг',
+          style: display(size: 26, weight: FontWeight.w800, spacing: -.5),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          'ХЭЛ · АМАН ЗОХИОЛ · ӨВ',
+          style: label(size: 11).copyWith(letterSpacing: 1.1),
+        ),
+      ],
     );
   }
 }
@@ -106,125 +195,4 @@ class _Status extends StatelessWidget {
       textAlign: TextAlign.center,
     ),
   );
-}
-
-class _Header extends StatelessWidget {
-  const _Header({required this.score});
-
-  final int score;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        // Үлдсэн зайг эзэлж онооыг баруун зах руу түлхэнэ; нарийн дэлгэцэд
-        // (320 өргөн) гарчиг халин гарахгүйгээр шахагдана.
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Буриад үг',
-                style: display(
-                  size: 15,
-                  weight: FontWeight.w800,
-                  spacing: -.3,
-                  height: 1.1,
-                ),
-              ),
-              Text(
-                'КАРТ ТОГЛООМ · ТУРШИЛТ',
-                style: label(size: 11).copyWith(letterSpacing: .66),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(width: 12),
-        Semantics(
-          label: 'Оноо $score',
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                '$score',
-                style: display(
-                  size: 20,
-                  weight: FontWeight.w600,
-                  color: BuriadColors.shar,
-                ),
-              ),
-              Text('ОНОО', style: label(size: 10).copyWith(letterSpacing: .8)),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _Tabs extends StatelessWidget {
-  const _Tabs({
-    required this.labels,
-    required this.index,
-    required this.onSelect,
-  });
-
-  final List<String> labels;
-  final int index;
-  final ValueChanged<int> onSelect;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(4),
-      decoration: BoxDecoration(
-        color: BuriadColors.khadag.withValues(alpha: .08),
-        borderRadius: BorderRadius.circular(11),
-      ),
-      child: Row(
-        children: [
-          for (var i = 0; i < labels.length; i++) ...[
-            if (i > 0) const SizedBox(width: 4),
-            Expanded(
-              child: Semantics(
-                button: true,
-                selected: i == index,
-                child: GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onTap: () => onSelect(i),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 180),
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 9,
-                      horizontal: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: i == index
-                          ? BuriadColors.tengerSoft
-                          : Colors.transparent,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      labels[i],
-                      textAlign: TextAlign.center,
-                      style: body(
-                        size: 13,
-                        weight: FontWeight.w600,
-                        color: i == index
-                            ? BuriadColors.sut
-                            : BuriadColors.sutDim,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
 }

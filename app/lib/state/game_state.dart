@@ -2,7 +2,10 @@ import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 
+import '../data/story_store.dart';
 import '../data/word_store.dart';
+import '../models/genre.dart';
+import '../models/story.dart';
 import '../models/word.dart';
 
 /// Тааварлах тоглоомын нэг асуулт.
@@ -28,9 +31,12 @@ enum LoadState { loading, ready, failed }
 /// Аппын нэгдсэн төлөв: үгийн сан, оноо, ёохор бөгжийн давталт, одоогийн асуулт.
 class GameState extends ChangeNotifier {
   /// [random]-ыг зөвхөн тест дамжуулна — үрийг тогтоовол асуулт давтагдана.
-  GameState(this._store, {Random? random}) : _rng = random ?? Random();
+  GameState(this._store, {StoryStore? stories, Random? random})
+    : _stories = stories ?? StoryStore(),
+      _rng = random ?? Random();
 
   final WordStore _store;
+  final StoryStore _stories;
   final Random _rng;
 
   /// Нэг ёохор бөгж = 10 асуулт.
@@ -40,6 +46,9 @@ class GameState extends ChangeNotifier {
 
   LoadState load = LoadState.loading;
   List<Word> words = const [];
+
+  /// Аппад харуулахыг зөвшөөрсөн бичлэгүүд.
+  List<Story> stories = const [];
 
   int score = 0;
   List<bool> streak = const [];
@@ -56,6 +65,7 @@ class GameState extends ChangeNotifier {
   Future<void> init() async {
     try {
       words = await _store.loadSaved() ?? await _store.loadBundled();
+      stories = (await _stories.load()).playable;
       load = LoadState.ready;
       _nextQuestion();
     } catch (_) {
@@ -65,6 +75,12 @@ class GameState extends ChangeNotifier {
   }
 
   List<T> _shuffled<T>(Iterable<T> l) => List<T>.of(l)..shuffle(_rng);
+
+  /// Тухайн төрлийн бичлэгүүд.
+  List<Story> byGenre(Genre g) => [
+    for (final s in stories)
+      if (Genre.parse(s.genre) == g) s,
+  ];
 
   bool get canGuess => words.length >= minForGuess;
   bool get canPair => words.length >= minForPairs;

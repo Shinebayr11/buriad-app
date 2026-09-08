@@ -43,14 +43,13 @@ class Segment {
   final String m;
 
   factory Segment.fromJson(Map<String, dynamic> j) => Segment(
-        start: _num(j['start']),
-        end: _num(j['end']),
-        b: _str(j['b']),
-        m: _str(j['m']),
-      );
+    start: _num(j['start']),
+    end: _num(j['end']),
+    b: _str(j['b']),
+    m: _str(j['m']),
+  );
 
-  Map<String, dynamic> toJson() =>
-      {'start': start, 'end': end, 'b': b, 'm': m};
+  Map<String, dynamic> toJson() => {'start': start, 'end': end, 'b': b, 'm': m};
 
   bool get isValid => end > start && start >= 0 && b.isNotEmpty;
 
@@ -106,16 +105,16 @@ class Rights {
   }
 
   Map<String, dynamic> toJson() => {
-        'consentOn': consentOn,
-        'consentForm': consentForm,
-        'publicInApp': publicInApp,
-        'openToResearchers': openToResearchers,
-        'aiTrainingAllowed': aiTrainingAllowed,
-        'nameCredited': nameCredited,
-        'withdrawableBy': withdrawableBy,
-        'license': license,
-        'tkLabels': tkLabels,
-      };
+    'consentOn': consentOn,
+    'consentForm': consentForm,
+    'publicInApp': publicInApp,
+    'openToResearchers': openToResearchers,
+    'aiTrainingAllowed': aiTrainingAllowed,
+    'nameCredited': nameCredited,
+    'withdrawableBy': withdrawableBy,
+    'license': license,
+    'tkLabels': tkLabels,
+  };
 }
 
 /// Ярьсан хүн.
@@ -151,13 +150,13 @@ class Narrator {
   }
 
   Map<String, dynamic> toJson() => {
-        'name': name,
-        'birthYear': birthYear,
-        'birthPlace': birthPlace,
-        'dialect': dialect?.label ?? '',
-        'dialectVerifiedBy': dialectVerifiedBy,
-        'learnedFrom': learnedFrom,
-      };
+    'name': name,
+    'birthYear': birthYear,
+    'birthPlace': birthPlace,
+    'dialect': dialect?.label ?? '',
+    'dialectVerifiedBy': dialectVerifiedBy,
+    'learnedFrom': learnedFrom,
+  };
 }
 
 /// Бичлэгийн техникийн мэдээлэл.
@@ -197,14 +196,14 @@ class Recording {
   }
 
   Map<String, dynamic> toJson() => {
-        'app': app,
-        'master': master,
-        'duration': duration,
-        'recordedAt': recordedAt,
-        'recordedIn': recordedIn,
-        'recordedBy': recordedBy,
-        'equipment': equipment,
-      };
+    'app': app,
+    'master': master,
+    'duration': duration,
+    'recordedAt': recordedAt,
+    'recordedIn': recordedIn,
+    'recordedBy': recordedBy,
+    'equipment': equipment,
+  };
 }
 
 /// Нэг үлгэр, домог эсвэл дуу.
@@ -246,8 +245,9 @@ class Story {
       titleM: _str(title['m']),
       genre: _str(j['genre']),
       audio: Recording.fromJson((j['audio'] as Map?)?.cast<String, dynamic>()),
-      narrator:
-          Narrator.fromJson((j['narrator'] as Map?)?.cast<String, dynamic>()),
+      narrator: Narrator.fromJson(
+        (j['narrator'] as Map?)?.cast<String, dynamic>(),
+      ),
       rights: Rights.fromJson((j['rights'] as Map?)?.cast<String, dynamic>()),
       transcriptBy: _str(tr['by']),
       transcriptDate: _str(tr['date']),
@@ -261,20 +261,20 @@ class Story {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'title': {'b': titleB, 'm': titleM},
-        'genre': genre,
-        'audio': audio.toJson(),
-        'narrator': narrator.toJson(),
-        'transcript': {
-          'by': transcriptBy,
-          'date': transcriptDate,
-          'verifiedBy': transcriptVerifiedBy,
-        },
-        'rights': rights.toJson(),
-        'segments': [for (final s in segments) s.toJson()],
-        'notes': notes,
-      };
+    'id': id,
+    'title': {'b': titleB, 'm': titleM},
+    'genre': genre,
+    'audio': audio.toJson(),
+    'narrator': narrator.toJson(),
+    'transcript': {
+      'by': transcriptBy,
+      'date': transcriptDate,
+      'verifiedBy': transcriptVerifiedBy,
+    },
+    'rights': rights.toJson(),
+    'segments': [for (final s in segments) s.toJson()],
+    'notes': notes,
+  };
 
   /// Аппад тоглуулж болох эсэх.
   ///
@@ -317,7 +317,9 @@ class Story {
     need(rights.consentForm, 'бичгийн зөвшөөрлийн байршил');
 
     for (var i = 0; i < segments.length; i++) {
-      if (!segments[i].isValid) p.add('${i + 1}-р хэсгийн цаг эсвэл бичвэр буруу');
+      if (!segments[i].isValid) {
+        p.add('${i + 1}-р хэсгийн цаг эсвэл бичвэр буруу');
+      }
     }
     return p;
   }
@@ -333,8 +335,10 @@ class StoryArchive {
   final List<Story> stories;
 
   /// Аппад харуулж болох бичлэгүүд.
-  List<Story> get playable =>
-      [for (final s in stories) if (s.playableInApp) s];
+  List<Story> get playable => [
+    for (final s in stories)
+      if (s.playableInApp) s,
+  ];
 
   /// Файлын агуулгыг уншина. Бүтэц таарахгүй бол null.
   static StoryArchive? parse(Object? raw) {
