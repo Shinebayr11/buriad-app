@@ -36,6 +36,7 @@ flutter:
 
   assets:
     - assets/data/words.json
+    - assets/data/stories.json
 
   # Фонтыг багцална — Ү Ө Һ үсэг ямар ч төхөөрөмж дээр зөв гарахын тулд.
   # Хоёулаа хувьсах (variable) фонт тул нэг файлаас бүх жин гарна.

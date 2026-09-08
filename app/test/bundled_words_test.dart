@@ -1,4 +1,8 @@
+import 'dart:convert';
+
 import 'package:buriad_app/data/word_store.dart';
+import 'package:buriad_app/models/story.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_test/flutter_test.dart';
 
 import 'support/fake_store.dart';
@@ -41,5 +45,17 @@ void main() {
     expect(all, contains('һ')); // U+04BB
     expect(all, contains('ү')); // U+04AF
     expect(all.contains('h'), isFalse, reason: 'латин h биш кирилл һ байх ёстой');
+  });
+
+  test('assets/data/stories.json уншигдана', () async {
+    final raw = jsonDecode(await rootBundle.loadString('assets/data/stories.json'));
+    final a = StoryArchive.parse(raw);
+
+    expect(a, isNotNull, reason: 'архивын бүтэц таарах ёстой');
+    expect(a!.schema, StoryArchive.currentSchema);
+    // Бичлэг цуглуулж эхлээгүй тул одоогоор хоосон.
+    for (final s in a.stories) {
+      expect(s.archiveProblems, isEmpty, reason: '${s.id}: мэдээлэл дутуу');
+    }
   });
 }
