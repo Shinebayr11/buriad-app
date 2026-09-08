@@ -1,0 +1,4 @@
+tags:
+  # Дүрсний тест. Санаатай өөрчлөлтийн дараа шинэчлэх:
+  #   flutter test --update-goldens --tags golden
+  golden:

@@ -1,0 +1,10 @@
+# Эхлэх дэлгэц — `dart run flutter_native_splash:create` гэж ажиллуулна.
+flutter_native_splash:
+  color: "#0b2138" # tenger-deep
+  image: assets/icon/splash.png
+  android: true
+  ios: true
+  fullscreen: false
+  android_12:
+    color: "#0b2138"
+    image: assets/icon/splash.png

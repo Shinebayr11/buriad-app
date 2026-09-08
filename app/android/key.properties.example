@@ -1,0 +1,10 @@
+# Release гарын үсгийн тохиргоо. Энэ файлыг key.properties нэрээр хуулж бөглөнө.
+# key.properties болон *.jks файлууд .gitignore-д орсон — git-д хэзээ ч бүү оруул.
+#
+# Түлхүүр үүсгэх (нэг л удаа; алдвал Play Store дээр аппаа шинэчилж ЧАДАХГҮЙ — нөөцлөөрэй):
+#   keytool -genkey -v -keystore ~/buriad-upload.jks -keyalg RSA -keysize 2048 \
+#           -validity 10000 -alias upload
+storePassword=ЭНД_НУУЦ_ҮГ
+keyPassword=ЭНД_НУУЦ_ҮГ
+keyAlias=upload
+storeFile=/Users/ТАНЫ_НЭР/buriad-upload.jks
