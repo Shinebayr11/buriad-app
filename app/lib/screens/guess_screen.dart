@@ -95,21 +95,25 @@ class _GuessScreenState extends State<GuessScreen>
             onTap: s.toggleFlip,
             onSound: () => _playAudio(q.right),
           ),
-          const SizedBox(height: 16),
-          for (var i = 0; i < q.opts.length; i++) ...[
-            if (i > 0) const SizedBox(height: 9),
-            _Answer(
-              index: i,
-              text: q.optionText(q.opts[i]),
-              state: !s.locked
-                  ? _AnswerState.idle
-                  : identical(q.opts[i], q.right)
-                  ? _AnswerState.right
-                  : identical(q.opts[i], s.chosen)
-                  ? _AnswerState.wrong
-                  : _AnswerState.disabled,
-              onTap: s.locked ? null : () => s.answer(q.opts[i]),
-            ),
+          // Зөв хариулсан бол сонголтууд алга болж, шууд «Дараагийн үг» гарна.
+          // Буруу бол үлдээнэ — аль нь зөв байсныг харах хэрэгтэй.
+          if (!(s.locked && s.lastCorrect)) ...[
+            const SizedBox(height: 16),
+            for (var i = 0; i < q.opts.length; i++) ...[
+              if (i > 0) const SizedBox(height: 9),
+              _Answer(
+                index: i,
+                text: q.optionText(q.opts[i]),
+                state: !s.locked
+                    ? _AnswerState.idle
+                    : identical(q.opts[i], q.right)
+                    ? _AnswerState.right
+                    : identical(q.opts[i], s.chosen)
+                    ? _AnswerState.wrong
+                    : _AnswerState.disabled,
+                onTap: s.locked ? null : () => s.answer(q.opts[i]),
+              ),
+            ],
           ],
           const SizedBox(height: 14),
           ConstrainedBox(

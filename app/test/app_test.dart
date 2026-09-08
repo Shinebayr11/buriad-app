@@ -97,6 +97,40 @@ void main() {
     expect(find.text('Дараагийн үг'), findsOneWidget);
   });
 
+  testWidgets('зөв хариулахад сонголтууд алга болж, Дараагийн үг гарна',
+      (tester) async {
+    final state = await pumpApp(tester);
+    final q = state.q!;
+    final rightAt = q.opts.indexWhere((o) => identical(o, q.right));
+
+    // Хариулахаас өмнө дөрвүүлээ байна.
+    for (var i = 1; i <= 4; i++) {
+      expect(answerAt(i), findsOneWidget);
+    }
+
+    await tapVisible(tester, answerAt(rightAt + 1));
+
+    for (var i = 1; i <= 4; i++) {
+      expect(answerAt(i), findsNothing, reason: 'зөв бол сонголт үлдэхгүй');
+    }
+    expect(find.text('Дараагийн үг'), findsOneWidget);
+  });
+
+  testWidgets('буруу хариулахад сонголтууд үлдэж, зөвийг нь тодруулна',
+      (tester) async {
+    final state = await pumpApp(tester);
+    final q = state.q!;
+    final wrongAt = q.opts.indexWhere((o) => !identical(o, q.right));
+
+    await tapVisible(tester, answerAt(wrongAt + 1));
+
+    for (var i = 1; i <= 4; i++) {
+      expect(answerAt(i), findsOneWidget,
+          reason: 'буруу бол аль нь зөв байсныг харуулна');
+    }
+    expect(find.text('Дараагийн үг'), findsOneWidget);
+  });
+
   testWidgets('буруу хариулахад зөв үгийг харуулна', (tester) async {
     final state = await pumpApp(tester);
     final q = state.q!;
