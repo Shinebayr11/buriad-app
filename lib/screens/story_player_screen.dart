@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../models/story.dart';
 import '../theme.dart';
@@ -92,11 +93,7 @@ class _StoryPlayerScreenState extends State<StoryPlayerScreen> {
         child: SafeArea(
           top: false,
           child: story.audio.app.isEmpty
-              ? const EmptyState(
-                  icon: Icons.volume_off_outlined,
-                  title: 'Бичлэг байхгүй байна',
-                  message: 'Эх хэлтэй хүний бичлэг нэмэгдсэний дараа сонсох боломжтой.',
-                )
+              ? _unavailableContent(story)
               : Column(
                   children: [
                     _controls(),
@@ -107,6 +104,73 @@ class _StoryPlayerScreenState extends State<StoryPlayerScreen> {
         ),
       ),
     );
+  }
+
+  Widget _unavailableContent(Story story) {
+    if (story.genre != 'дуу') {
+      return const EmptyState(
+        icon: Icons.volume_off_outlined,
+        title: 'Бичлэг байхгүй байна',
+        message: 'Эх хэлтэй хүний бичлэг нэмэгдсэний дараа сонсох боломжтой.',
+      );
+    }
+    return ListView(
+      padding: const EdgeInsets.all(20),
+      children: [
+        const Icon(Icons.music_note_outlined, size: 64, color: AppColors.shar),
+        const SizedBox(height: 16),
+        Text(
+          story.title.mongolian,
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.headlineMedium,
+        ),
+        if (story.performer.isNotEmpty) ...[
+          const SizedBox(height: 8),
+          Text(
+            'Дуушан: ${story.performer}',
+            textAlign: TextAlign.center,
+            style: const TextStyle(color: AppColors.khadag),
+          ),
+        ],
+        const SizedBox(height: 24),
+        const EmptyState(
+          icon: Icons.cloud_download_outlined,
+          title: 'Аудио хүлээгдэж байна',
+          message: 'Toonto.mn архивын аудио файлыг нийтэлсний дараа эндээс сонсох боломжтой болно.',
+        ),
+        if (story.notes.isNotEmpty) ...[
+          const SizedBox(height: 20),
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Text(story.notes),
+            ),
+          ),
+        ],
+        if (story.sourceUrl.isNotEmpty) ...[
+          const SizedBox(height: 12),
+          OutlinedButton.icon(
+            onPressed: () => _openSource(story.sourceUrl),
+            icon: const Icon(Icons.open_in_new),
+            label: const Text('Toonto.mn эх сурвалжийг нээх'),
+          ),
+        ],
+      ],
+    );
+  }
+
+  Future<void> _openSource(String sourceUrl) async {
+    final opened = await launchUrl(
+      Uri.parse(sourceUrl),
+      mode: LaunchMode.externalApplication,
+    );
+    if (!opened && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Эх сурвалжийн холбоосыг нээж чадсангүй.'),
+        ),
+      );
+    }
   }
 
   Widget _controls() {
@@ -214,6 +278,7 @@ class _StoryPlayerScreenState extends State<StoryPlayerScreen> {
     'хори' => 'Хори аялгуу',
     'ага' => 'Ага аялгуу',
     'сартуул' => 'Сартуул аялгуу',
+    'тэмдэглээгүй' => 'Аялгуу тэмдэглээгүй',
     _ => 'Аялгуу тэмдэглээгүй',
   };
 }

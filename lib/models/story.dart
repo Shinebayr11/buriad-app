@@ -32,6 +32,8 @@ class Story {
     required this.transcript,
     required this.segments,
     required this.notes,
+    required this.performer,
+    required this.sourceUrl,
   });
 
   final String id;
@@ -43,9 +45,11 @@ class Story {
   final TranscriptCredit transcript;
   final List<StorySegment> segments;
   final String notes;
+  final String performer;
+  final String sourceUrl;
 
   factory Story.fromJson(Map<String, dynamic> json) {
-    const genres = {'үлгэр', 'домог', 'түүх', 'өгүүллэг'};
+    const genres = {'үлгэр', 'домог', 'түүх', 'өгүүллэг', 'дуу'};
     final genre = _text(json, 'genre');
     if (!genres.contains(genre)) {
       throw const FormatException('genre талбарын утга буруу байна.');
@@ -69,6 +73,8 @@ class Story {
           )
           .toList(growable: false),
       notes: _text(json, 'notes'),
+      performer: _optionalText(json, 'performer'),
+      sourceUrl: _optionalText(json, 'sourceUrl'),
     );
   }
 }
@@ -128,7 +134,7 @@ class Narrator {
 
   factory Narrator.fromJson(Map<String, dynamic> json) {
     final dialect = _text(json, 'dialect');
-    const dialects = {'хори', 'ага', 'сартуул'};
+    const dialects = {'хори', 'ага', 'сартуул', 'тэмдэглээгүй'};
     if (!dialects.contains(dialect)) {
       throw const FormatException('Өгүүлэгчийн dialect талбар буруу байна.');
     }
@@ -235,6 +241,15 @@ Map<String, dynamic> _map(Map<String, dynamic> json, String key) {
 
 String _text(Map<String, dynamic> json, String key) {
   final value = json[key];
+  if (value is! String) {
+    throw FormatException('$key талбар тэмдэгт мөр байх ёстой.');
+  }
+  return value.trim();
+}
+
+String _optionalText(Map<String, dynamic> json, String key) {
+  final value = json[key];
+  if (value == null) return '';
   if (value is! String) {
     throw FormatException('$key талбар тэмдэгт мөр байх ёстой.');
   }

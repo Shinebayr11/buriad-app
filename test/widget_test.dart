@@ -1,5 +1,9 @@
 import 'package:buriad_ug/main.dart';
 import 'package:buriad_ug/auth/auth_gateway.dart';
+import 'package:buriad_ug/data/story_repository.dart';
+import 'package:buriad_ug/models/story.dart';
+import 'package:buriad_ug/screens/story_list_screen.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -153,14 +157,70 @@ void main() {
     );
   });
 
-  testWidgets('хоосон аман зохиолын төлөв харагдана', (tester) async {
+  testWidgets('хоосон үлгэрийн төлөв харагдана', (tester) async {
     await tester.pumpWidget(BuriadUgApp(store: FakeWordStore()));
     await tester.pumpAndSettle();
     await openHome(tester);
-    await tester.tap(find.text('Бүгдийг үзэх'));
+    await tester.tap(find.text('Үлгэр'));
     await tester.pumpAndSettle();
 
     expect(find.text('Нийтлэх бичлэг алга'), findsOneWidget);
+  });
+
+  testWidgets('дууны ангилал гурван бичлэгтэй', (tester) async {
+    final story = Story.fromJson({
+      'id': 'ТУРШИЛТ-1',
+      'title': {'b': 'ТУРШИЛТ-1', 'm': 'туршилт 1'},
+      'genre': 'дуу',
+      'audio': {
+        'app': '',
+        'master': '',
+        'duration': 0,
+        'recordedAt': '',
+        'recordedIn': '',
+        'recordedBy': '',
+        'equipment': '',
+      },
+      'narrator': {
+        'name': '',
+        'birthYear': null,
+        'birthplace': '',
+        'dialect': 'тэмдэглээгүй',
+      },
+      'rights': {
+        'consentOn': '',
+        'consentForm': '',
+        'publicInApp': true,
+        'openToResearchers': false,
+        'aiTrainingAllowed': false,
+        'nameCredited': true,
+        'withdrawableBy': '',
+        'license': '',
+        'tkLabels': <String>[],
+      },
+      'transcript': {'by': '', 'date': '', 'verifiedBy': ''},
+      'segments': <Object>[],
+      'notes': '',
+      'performer': 'ТУРШИЛТ-1',
+      'sourceUrl': 'https://toonto.mn/',
+    });
+    await tester.pumpWidget(
+      MaterialApp(
+        home: StoryListScreen(
+          genre: 'дуу',
+          repository: _FakeStoryRepository(List.filled(3, story)),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    expect(find.byType(ListTile), findsNWidgets(3));
+    await tester.tap(find.byType(ListTile).first);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+
+    expect(find.text('Аудио хүлээгдэж байна'), findsOneWidget);
+    expect(find.text('Toonto.mn эх сурвалжийг нээх'), findsOneWidget);
   });
 
   testWidgets('320 өргөн ба том текстэд нүүр дэлгэц эвдрэхгүй', (tester) async {
@@ -181,4 +241,13 @@ void main() {
     expect(tester.takeException(), isNull);
     expect(find.text('Тоглоом'), findsOneWidget);
   });
+}
+
+class _FakeStoryRepository extends StoryRepository {
+  _FakeStoryRepository(this.stories);
+
+  final List<Story> stories;
+
+  @override
+  Future<List<Story>> loadPublicStories() => SynchronousFuture(stories);
 }

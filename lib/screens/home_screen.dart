@@ -151,6 +151,7 @@ class HomeScreen extends StatelessWidget {
                       ('Домог', Icons.landscape_outlined),
                       ('Түүх', Icons.history_edu_outlined),
                       ('Өгүүллэг', Icons.record_voice_over_outlined),
+                      ('Дуу', Icons.music_note_outlined),
                     ])
                       _GenreCard(
                         title: genre.$1,

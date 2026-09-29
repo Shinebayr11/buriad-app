@@ -1,4 +1,134 @@
 {
   "schema": "buriad-archive/1",
-  "stories": []
+  "stories": [
+    {
+      "id": "toonto-mende-amor",
+      "title": {
+        "b": "МЭНДЭ АМОР",
+        "m": "МЭНДЭ АМОР"
+      },
+      "genre": "дуу",
+      "audio": {
+        "app": "",
+        "master": "Mende_amor.mp3",
+        "duration": 0,
+        "recordedAt": "",
+        "recordedIn": "",
+        "recordedBy": "",
+        "equipment": ""
+      },
+      "narrator": {
+        "name": "",
+        "birthYear": null,
+        "birthplace": "",
+        "dialect": "тэмдэглээгүй"
+      },
+      "rights": {
+        "consentOn": "",
+        "consentForm": "",
+        "publicInApp": true,
+        "openToResearchers": false,
+        "aiTrainingAllowed": false,
+        "nameCredited": true,
+        "withdrawableBy": "info@toonto.mn",
+        "license": "",
+        "tkLabels": []
+      },
+      "transcript": {
+        "by": "",
+        "date": "",
+        "verifiedBy": ""
+      },
+      "segments": [],
+      "notes": "Үгыени: Л.Одончимэд · Хүгжэмыени: Д.Жаргалсайхан",
+      "performer": "Д.Жаргалсайхан",
+      "sourceUrl": "https://toonto.mn/duu/mende-amor-duushan-d-jargalsaihan/"
+    },
+    {
+      "id": "toonto-aga-nyutag",
+      "title": {
+        "b": "АГА НЮТАГ",
+        "m": "АГА НЮТАГ"
+      },
+      "genre": "дуу",
+      "audio": {
+        "app": "",
+        "master": "aga_nyutag.mp3",
+        "duration": 0,
+        "recordedAt": "",
+        "recordedIn": "",
+        "recordedBy": "",
+        "equipment": ""
+      },
+      "narrator": {
+        "name": "",
+        "birthYear": null,
+        "birthplace": "",
+        "dialect": "тэмдэглээгүй"
+      },
+      "rights": {
+        "consentOn": "",
+        "consentForm": "",
+        "publicInApp": true,
+        "openToResearchers": false,
+        "aiTrainingAllowed": false,
+        "nameCredited": true,
+        "withdrawableBy": "info@toonto.mn",
+        "license": "",
+        "tkLabels": []
+      },
+      "transcript": {
+        "by": "",
+        "date": "",
+        "verifiedBy": ""
+      },
+      "segments": [],
+      "notes": "Үгыени: Балдандорж Никилаевич · Хүгжэмыени: Г.Батцэрэн",
+      "performer": "Г.Батцэрэн",
+      "sourceUrl": "https://toonto.mn/duu/aga-nyutag-duushan-g-battseren/"
+    },
+    {
+      "id": "toonto-baavai-chinges",
+      "title": {
+        "b": "Баавай Чингэс",
+        "m": "Баавай Чингэс"
+      },
+      "genre": "дуу",
+      "audio": {
+        "app": "",
+        "master": "Track_No03.mp3",
+        "duration": 0,
+        "recordedAt": "",
+        "recordedIn": "",
+        "recordedBy": "",
+        "equipment": ""
+      },
+      "narrator": {
+        "name": "",
+        "birthYear": null,
+        "birthplace": "",
+        "dialect": "тэмдэглээгүй"
+      },
+      "rights": {
+        "consentOn": "",
+        "consentForm": "",
+        "publicInApp": true,
+        "openToResearchers": false,
+        "aiTrainingAllowed": false,
+        "nameCredited": true,
+        "withdrawableBy": "info@toonto.mn",
+        "license": "",
+        "tkLabels": []
+      },
+      "transcript": {
+        "by": "",
+        "date": "",
+        "verifiedBy": ""
+      },
+      "segments": [],
+      "notes": "Монголой-Буряадуудай һүлдэ дуун",
+      "performer": "Ч.Чинзориг",
+      "sourceUrl": "https://toonto.mn/duu/baavai-chinges-duushan-ch-chinzorig/"
+    }
+  ]
 }

@@ -79,18 +79,21 @@ class _StoryListScreenState extends State<StoryListScreen> {
                   return Card(
                     child: ListTile(
                       contentPadding: const EdgeInsets.all(16),
-                      leading: const CircleAvatar(
+                      leading: CircleAvatar(
                         backgroundColor: AppColors.tengerSoft,
-                        child: Icon(Icons.play_arrow, color: AppColors.shar),
+                        child: Icon(
+                          story.genre == 'дуу'
+                              ? Icons.music_note
+                              : Icons.play_arrow,
+                          color: AppColors.shar,
+                        ),
                       ),
                       title: Text(
                         story.title.mongolian.isEmpty
                             ? 'Гарчиггүй бичлэг'
                             : story.title.mongolian,
                       ),
-                      subtitle: Text(
-                        '${story.genre} · ${_duration(story.audio.duration)} · ${_dialectLabel(story.narrator.dialect)}',
-                      ),
+                      subtitle: Text(_subtitle(story)),
                       trailing: const Icon(Icons.chevron_right),
                       onTap: () => Navigator.of(context).push(
                         MaterialPageRoute<void>(
@@ -118,10 +121,24 @@ class _StoryListScreenState extends State<StoryListScreen> {
     return '$minutes:$remaining';
   }
 
+  String _subtitle(Story story) {
+    if (story.genre == 'дуу') {
+      final performer = story.performer.isEmpty
+          ? 'Дуучин тэмдэглээгүй'
+          : story.performer;
+      final audio = story.audio.app.isEmpty
+          ? 'Аудио хүлээгдэж байна'
+          : _duration(story.audio.duration);
+      return '$performer · $audio';
+    }
+    return '${story.genre} · ${_duration(story.audio.duration)} · ${_dialectLabel(story.narrator.dialect)}';
+  }
+
   String _dialectLabel(String dialect) => switch (dialect) {
     'хори' => 'Хори аялгуу',
     'ага' => 'Ага аялгуу',
     'сартуул' => 'Сартуул аялгуу',
+    'тэмдэглээгүй' => 'Аялгуу тэмдэглээгүй',
     _ => 'Аялгуу тэмдэглээгүй',
   };
 }
