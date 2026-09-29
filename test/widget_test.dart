@@ -5,11 +5,28 @@ import 'package:flutter_test/flutter_test.dart';
 import 'support/fake_word_store.dart';
 
 void main() {
-  testWidgets('хоосон үгийн сангийн төлөв харагдана', (tester) async {
+  Future<void> openHome(WidgetTester tester) async {
+    final guestButton = find.text('Бүртгэлгүйгээр үзэх');
+    await tester.ensureVisible(guestButton);
+    await tester.pumpAndSettle();
+    await tester.tap(guestButton);
+    await tester.pumpAndSettle();
+  }
+
+  testWidgets('угтах дэлгэц гурван сонголттой', (tester) async {
     await tester.pumpWidget(BuriadUgApp(store: FakeWordStore()));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('0 үг · Удирдах'));
+    expect(find.text('Нэвтрэх'), findsOneWidget);
+    expect(find.text('Бүртгүүлэх'), findsOneWidget);
+    expect(find.text('Бүртгэлгүйгээр үзэх'), findsOneWidget);
+  });
+
+  testWidgets('хоосон үгийн сангийн төлөв харагдана', (tester) async {
+    await tester.pumpWidget(BuriadUgApp(store: FakeWordStore()));
+    await tester.pumpAndSettle();
+    await openHome(tester);
+    await tester.tap(find.byTooltip('Үгийн сан'));
     await tester.pumpAndSettle();
 
     expect(find.text('Үгийн сан хоосон байна'), findsOneWidget);
@@ -19,7 +36,8 @@ void main() {
   testWidgets('Ү Ө Һ үсгийг курсорын байрлалд оруулна', (tester) async {
     await tester.pumpWidget(BuriadUgApp(store: FakeWordStore()));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('0 үг · Удирдах'));
+    await openHome(tester);
+    await tester.tap(find.byTooltip('Үгийн сан'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Үг нэмэх').first);
     await tester.pumpAndSettle();
@@ -30,5 +48,40 @@ void main() {
     await tester.pump();
 
     expect(find.text('ТУРШИЛТ-1Ү'), findsOneWidget);
+  });
+
+  testWidgets('нэвтрэх маягт буруу утгыг тайлбарлана', (tester) async {
+    await tester.pumpWidget(BuriadUgApp(store: FakeWordStore()));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Нэвтрэх'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(FilledButton, 'Нэвтрэх'));
+    await tester.pump();
+
+    expect(find.text('И-мэйл хаягаа зөв оруулна уу.'), findsOneWidget);
+    expect(
+      find.text('Нууц үг 8-аас цөөнгүй тэмдэгттэй байна.'),
+      findsOneWidget,
+    );
+    expect(find.text('Бүртгэлгүйгээр үзэх'), findsOneWidget);
+  });
+
+  testWidgets('320 өргөн ба том текстэд нүүр дэлгэц эвдрэхгүй', (tester) async {
+    tester.view.physicalSize = const Size(320, 700);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(
+      MediaQuery(
+        data: const MediaQueryData(textScaler: TextScaler.linear(1.5)),
+        child: BuriadUgApp(store: FakeWordStore()),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await openHome(tester);
+
+    expect(tester.takeException(), isNull);
+    expect(find.text('Тоглоом'), findsOneWidget);
   });
 }
