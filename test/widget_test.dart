@@ -9,12 +9,17 @@ void main() {
     await tester.pumpWidget(BuriadUgApp(store: FakeWordStore()));
     await tester.pumpAndSettle();
 
+    await tester.tap(find.text('0 үг · Удирдах'));
+    await tester.pumpAndSettle();
+
     expect(find.text('Үгийн сан хоосон байна'), findsOneWidget);
     expect(find.text('Үг нэмэх'), findsWidgets);
   });
 
   testWidgets('Ү Ө Һ үсгийг курсорын байрлалд оруулна', (tester) async {
     await tester.pumpWidget(BuriadUgApp(store: FakeWordStore()));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('0 үг · Удирдах'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Үг нэмэх').first);
     await tester.pumpAndSettle();

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'data/shared_preferences_word_store.dart';
 import 'data/word_store.dart';
-import 'screens/word_admin_screen.dart';
+import 'screens/game_menu_screen.dart';
 import 'state/word_controller.dart';
 import 'theme.dart';
 
@@ -41,7 +41,7 @@ class _BuriadUgAppState extends State<BuriadUgApp> {
       debugShowCheckedModeBanner: false,
       title: 'Буриад үг',
       theme: AppTheme.dark,
-      home: WordAdminScreen(controller: _controller),
+      home: GameMenuScreen(controller: _controller),
     );
   }
 }
