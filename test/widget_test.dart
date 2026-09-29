@@ -23,10 +23,12 @@ void main() {
   });
 
   testWidgets('хоосон үгийн сангийн төлөв харагдана', (tester) async {
-    await tester.pumpWidget(BuriadUgApp(store: FakeWordStore()));
+    await tester.pumpWidget(
+      BuriadUgApp(store: FakeWordStore(), adminMode: true),
+    );
     await tester.pumpAndSettle();
     await openHome(tester);
-    await tester.tap(find.byTooltip('Үгийн сан'));
+    await tester.tap(find.byTooltip('Үгийн сангийн удирдлага'));
     await tester.pumpAndSettle();
 
     expect(find.text('Үгийн сан хоосон байна'), findsOneWidget);
@@ -34,10 +36,12 @@ void main() {
   });
 
   testWidgets('Ү Ө Һ үсгийг курсорын байрлалд оруулна', (tester) async {
-    await tester.pumpWidget(BuriadUgApp(store: FakeWordStore()));
+    await tester.pumpWidget(
+      BuriadUgApp(store: FakeWordStore(), adminMode: true),
+    );
     await tester.pumpAndSettle();
     await openHome(tester);
-    await tester.tap(find.byTooltip('Үгийн сан'));
+    await tester.tap(find.byTooltip('Үгийн сангийн удирдлага'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Үг нэмэх').first);
     await tester.pumpAndSettle();
@@ -48,6 +52,15 @@ void main() {
     await tester.pump();
 
     expect(find.text('ТУРШИЛТ-1Ү'), findsOneWidget);
+  });
+
+  testWidgets('энгийн хэрэглэгчид үгийн удирдлага харагдахгүй', (tester) async {
+    await tester.pumpWidget(BuriadUgApp(store: FakeWordStore()));
+    await tester.pumpAndSettle();
+    await openHome(tester);
+
+    expect(find.byTooltip('Үгийн сангийн удирдлага'), findsNothing);
+    expect(find.text('Үгийн сангийн удирдлага'), findsNothing);
   });
 
   testWidgets('нэвтрэх маягт буруу утгыг тайлбарлана', (tester) async {

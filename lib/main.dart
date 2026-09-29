@@ -12,9 +12,14 @@ void main() {
 }
 
 class BuriadUgApp extends StatefulWidget {
-  const BuriadUgApp({super.key, this.store});
+  const BuriadUgApp({
+    super.key,
+    this.store,
+    this.adminMode = const bool.fromEnvironment('ADMIN_MODE'),
+  });
 
   final WordStore? store;
+  final bool adminMode;
 
   @override
   State<BuriadUgApp> createState() => _BuriadUgAppState();
@@ -40,7 +45,10 @@ class _BuriadUgAppState extends State<BuriadUgApp> {
   void _continueWithoutAccount() {
     _navigatorKey.currentState?.pushAndRemoveUntil(
       MaterialPageRoute<void>(
-        builder: (_) => HomeScreen(controller: _controller),
+        builder: (_) => HomeScreen(
+          controller: _controller,
+          canManageWords: widget.adminMode,
+        ),
       ),
       (_) => false,
     );

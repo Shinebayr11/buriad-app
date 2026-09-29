@@ -9,9 +9,14 @@ import 'story_list_screen.dart';
 import 'word_admin_screen.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key, required this.controller});
+  const HomeScreen({
+    super.key,
+    required this.controller,
+    required this.canManageWords,
+  });
 
   final WordController controller;
+  final bool canManageWords;
 
   void _open(BuildContext context, Widget screen) {
     Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => screen));
@@ -21,18 +26,26 @@ class HomeScreen extends StatelessWidget {
     _open(context, WordAdminScreen(controller: controller));
   }
 
+  void _requestAdmin(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Үг нэмэхэд админ эрх шаардлагатай.')),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Буриад үг'),
-        actions: [
-          IconButton(
-            onPressed: () => _openWords(context),
-            tooltip: 'Үгийн сан',
-            icon: const Icon(Icons.library_books_outlined),
-          ),
-        ],
+        actions: canManageWords
+            ? [
+                IconButton(
+                  onPressed: () => _openWords(context),
+                  tooltip: 'Үгийн сангийн удирдлага',
+                  icon: const Icon(Icons.admin_panel_settings_outlined),
+                ),
+              ]
+            : null,
       ),
       body: HeritageFrame(
         child: SafeArea(
@@ -61,7 +74,9 @@ class HomeScreen extends StatelessWidget {
                           context,
                           QuizScreen(
                             words: controller.words,
-                            onAddWords: () => _openWords(context),
+                            onAddWords: () => canManageWords
+                                ? _openWords(context)
+                                : _requestAdmin(context),
                           ),
                         ),
                       ),
@@ -73,7 +88,9 @@ class HomeScreen extends StatelessWidget {
                           context,
                           MemoryScreen(
                             words: controller.words,
-                            onAddWords: () => _openWords(context),
+                            onAddWords: () => canManageWords
+                                ? _openWords(context)
+                                : _requestAdmin(context),
                           ),
                         ),
                       ),
@@ -137,12 +154,14 @@ class HomeScreen extends StatelessWidget {
                       ),
                   ],
                 ),
-                const SizedBox(height: 24),
-                OutlinedButton.icon(
-                  onPressed: () => _openWords(context),
-                  icon: const Icon(Icons.add),
-                  label: const Text('Үг нэмэх, удирдах'),
-                ),
+                if (canManageWords) ...[
+                  const SizedBox(height: 24),
+                  OutlinedButton.icon(
+                    onPressed: () => _openWords(context),
+                    icon: const Icon(Icons.admin_panel_settings_outlined),
+                    label: const Text('Үгийн сангийн удирдлага'),
+                  ),
+                ],
               ],
             ),
           ),
