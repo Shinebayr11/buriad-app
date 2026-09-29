@@ -1,17 +1,48 @@
-# buriad_ug
+# Буриад үг
 
-A new Flutter project.
+Буриад хэл, аман өвийг хадгалж түгээх Flutter апп.
 
-## Getting Started
+## Боломжууд
 
-This project is a starting point for a Flutter application.
+- Supabase Auth ашигласан бүртгэл, нэвтрэлт, и-мэйл баталгаажуулалт
+- Баталгаатай Буриад үгийн сан
+- Үг таах болон ой тогтоолтын тоглоом
+- Өгүүллэгийн жагсаалт, аудио тоглуулах боломж
+- Админ эрхтэй хэрэглэгчийн үг нэмэх, засах, устгах хэсэг
 
-A few resources to get you started if this is your first Flutter project:
+## Технологи
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+- Flutter, Dart
+- Supabase Auth
+- SharedPreferences, JSON
+- AudioPlayers, File Picker, Share Plus, URL Launcher
+- Flutter Test
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Төслийн бүтэц
+
+- Үндсэн хавтас — одоогийн Flutter апп
+- `legacy-web/` — Vite дээрх хуучин HTML прототип
+
+## Flutter апп ажиллуулах
+
+```bash
+flutter pub get
+flutter run
+```
+
+Supabase тохиргоог [`supabase.env.example.json`](supabase.env.example.json)-ийн
+загвараар үүсгэнэ. Нууц тохиргооны файл Git-д орохгүй.
+
+## Хуучин веб прототип ажиллуулах
+
+```bash
+cd legacy-web
+npm install
+npm run dev
+```
+
+## Тест
+
+```bash
+flutter test
+```

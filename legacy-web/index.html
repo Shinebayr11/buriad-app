@@ -1,0 +1,1003 @@
+<meta charset="utf-8" />
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, viewport-fit=cover"
+/>
+<title>Буриад үг — карт тоглоом</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=Golos+Text:wght@400;500;600;700&display=swap&subset=cyrillic,cyrillic-ext,latin"
+  rel="stylesheet"
+/>
+
+<style>
+  :root {
+    --tenger: #143a5e;
+    --tenger-deep: #0b2138;
+    --tenger-soft: #1d4e7a;
+    --khadag: #8fc7de;
+    --shar: #e4a33c;
+    --shar-deep: #c4842a;
+    --sut: #f4efe4;
+    --sut-dim: #b9c6d2;
+    --uls: #c1443f;
+    --khus: #7e9b7a;
+    --line: rgba(143, 199, 222, 0.22);
+    --disp: "Unbounded", "Golos Text", system-ui, sans-serif;
+    --body: "Golos Text", "Segoe UI", system-ui, sans-serif;
+  }
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+  html,
+  body {
+    height: 100%;
+  }
+  body {
+    background:
+      radial-gradient(120% 60% at 50% -10%, #1d4e7a 0%, transparent 60%),
+      var(--tenger-deep);
+    color: var(--sut);
+    font-family: var(--body);
+    font-size: 16px;
+    line-height: 1.45;
+    display: flex;
+    justify-content: center;
+    min-height: 100dvh;
+  }
+  .shell {
+    width: 100%;
+    max-width: 440px;
+    display: flex;
+    flex-direction: column;
+    padding: 14px 16px 24px;
+  }
+
+  /* ---------- header ---------- */
+  .top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .mark {
+    font-family: var(--disp);
+    font-weight: 800;
+    font-size: 15px;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+  .mark small {
+    display: block;
+    font-family: var(--body);
+    font-weight: 500;
+    font-size: 11px;
+    color: var(--sut-dim);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .score {
+    margin-left: auto;
+    text-align: right;
+    font-family: var(--disp);
+    font-weight: 600;
+    font-size: 20px;
+    color: var(--shar);
+  }
+  .score small {
+    display: block;
+    font-family: var(--body);
+    font-weight: 500;
+    font-size: 10px;
+    color: var(--sut-dim);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* ---------- yohor ring: the signature ---------- */
+  .yohor {
+    display: block;
+    margin: 2px auto 16px;
+    width: 120px;
+    height: 120px;
+  }
+  .yohor .seg {
+    fill: none;
+    stroke: var(--line);
+    stroke-width: 3;
+    stroke-linecap: round;
+    transition: stroke 0.35s ease;
+  }
+  .yohor .seg.on {
+    stroke: var(--shar);
+  }
+  .yohor .seg.miss {
+    stroke: var(--uls);
+  }
+  .yohor .dot {
+    fill: var(--tenger-soft);
+    transition:
+      fill 0.35s ease,
+      r 0.35s ease;
+  }
+  .yohor .dot.on {
+    fill: var(--khadag);
+  }
+  .yohor text {
+    font-family: var(--disp);
+    font-weight: 800;
+    font-size: 26px;
+    fill: var(--sut);
+    text-anchor: middle;
+  }
+  .yohor tspan.sub {
+    font-family: "Golos Text", sans-serif;
+    font-weight: 500;
+    font-size: 9px;
+    fill: var(--sut-dim);
+    letter-spacing: 0.1em;
+  }
+  @keyframes ringpulse {
+    0% {
+      transform: scale(1);
+    }
+    45% {
+      transform: scale(1.06);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+  .yohor.done {
+    animation: ringpulse 0.7s ease;
+  }
+
+  /* ---------- tabs ---------- */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    background: rgba(143, 199, 222, 0.08);
+    padding: 4px;
+    border-radius: 11px;
+    margin-bottom: 18px;
+  }
+  .tabs button {
+    flex: 1;
+    border: 0;
+    background: transparent;
+    color: var(--sut-dim);
+    font-family: var(--body);
+    font-weight: 600;
+    font-size: 13px;
+    padding: 9px 4px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.18s;
+  }
+  .tabs button[aria-selected="true"] {
+    background: var(--tenger-soft);
+    color: var(--sut);
+  }
+  .tabs button:focus-visible {
+    outline: 2px solid var(--shar);
+    outline-offset: 1px;
+  }
+
+  /* ---------- card ---------- */
+  .card {
+    background: linear-gradient(168deg, #1b4b75 0%, #153c5f 100%);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 26px 20px 22px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::after {
+    /* алхан хээ — buriad meander, quiet corner motif */
+    content: "";
+    position: absolute;
+    inset: auto -14px -14px auto;
+    width: 74px;
+    height: 74px;
+    opacity: 0.13;
+    background:
+      linear-gradient(var(--khadag), var(--khadag)) 0 0/100% 5px no-repeat,
+      linear-gradient(var(--khadag), var(--khadag)) 0 0/5px 100% no-repeat,
+      linear-gradient(var(--khadag), var(--khadag)) 18px 18px/100% 5px no-repeat,
+      linear-gradient(var(--khadag), var(--khadag)) 18px 18px/5px 100% no-repeat;
+  }
+  .pict {
+    font-size: 62px;
+    line-height: 1;
+    margin-bottom: 12px;
+    display: block;
+  }
+  .pict img {
+    width: 132px;
+    height: 132px;
+    object-fit: cover;
+    border-radius: 12px;
+  }
+  .prompt-lbl {
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--khadag);
+    margin-bottom: 6px;
+  }
+  .prompt {
+    font-family: var(--disp);
+    font-weight: 600;
+    font-size: 30px;
+    letter-spacing: -0.02em;
+    word-break: break-word;
+  }
+  .hint {
+    margin-top: 8px;
+    font-size: 12.5px;
+    color: var(--sut-dim);
+  }
+  .sound {
+    margin-top: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    border: 1px solid var(--line);
+    background: rgba(143, 199, 222, 0.07);
+    color: var(--khadag);
+    font-family: var(--body);
+    font-weight: 600;
+    font-size: 12.5px;
+    padding: 8px 15px;
+    border-radius: 99px;
+    cursor: pointer;
+  }
+  .sound[disabled] {
+    color: var(--sut-dim);
+    cursor: default;
+    opacity: 0.6;
+  }
+
+  /* ---------- answers ---------- */
+  .answers {
+    display: grid;
+    gap: 9px;
+    margin-top: 16px;
+  }
+  .ans {
+    border: 1px solid var(--line);
+    background: rgba(143, 199, 222, 0.06);
+    color: var(--sut);
+    font-family: var(--body);
+    font-weight: 600;
+    font-size: 16px;
+    padding: 15px 16px;
+    border-radius: 13px;
+    cursor: pointer;
+    text-align: left;
+    transition: 0.16s;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+  }
+  .ans:hover:not(:disabled) {
+    background: rgba(143, 199, 222, 0.13);
+  }
+  .ans:focus-visible {
+    outline: 2px solid var(--shar);
+    outline-offset: 2px;
+  }
+  .ans .idx {
+    font-family: var(--disp);
+    font-size: 11px;
+    color: var(--sut-dim);
+    min-width: 14px;
+  }
+  .ans.right {
+    background: var(--khus);
+    border-color: var(--khus);
+    color: #0b2138;
+  }
+  .ans.right .idx {
+    color: #0b2138;
+  }
+  .ans.wrong {
+    background: var(--uls);
+    border-color: var(--uls);
+  }
+  .ans:disabled {
+    cursor: default;
+  }
+
+  .verdict {
+    margin-top: 14px;
+    text-align: center;
+    min-height: 44px;
+  }
+  .verdict b {
+    font-family: var(--disp);
+    font-weight: 600;
+    font-size: 15px;
+  }
+  .verdict p {
+    font-size: 13px;
+    color: var(--sut-dim);
+    margin-top: 3px;
+  }
+  .next {
+    margin-top: 12px;
+    width: 100%;
+    border: 0;
+    background: var(--shar);
+    color: #0b2138;
+    font-family: var(--disp);
+    font-weight: 600;
+    font-size: 15px;
+    padding: 15px;
+    border-radius: 13px;
+    cursor: pointer;
+  }
+  .next:hover {
+    background: var(--shar-deep);
+  }
+  .next:focus-visible {
+    outline: 2px solid var(--khadag);
+    outline-offset: 2px;
+  }
+
+  /* ---------- pairs game ---------- */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .tile {
+    aspect-ratio: 3/4;
+    border: 1px solid var(--line);
+    background: rgba(143, 199, 222, 0.06);
+    border-radius: 12px;
+    color: var(--sut);
+    font-family: var(--body);
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    text-align: center;
+    transition: 0.18s;
+    word-break: break-word;
+    line-height: 1.2;
+  }
+  .tile .back {
+    font-size: 24px;
+    color: var(--tenger-soft);
+  }
+  .tile.up {
+    background: var(--tenger-soft);
+    border-color: var(--khadag);
+  }
+  .tile.matched {
+    background: var(--khus);
+    border-color: var(--khus);
+    color: #0b2138;
+    cursor: default;
+  }
+  .tile.emoji {
+    font-size: 30px;
+  }
+  .tile:focus-visible {
+    outline: 2px solid var(--shar);
+    outline-offset: 2px;
+  }
+
+  /* ---------- editor ---------- */
+  .note {
+    background: rgba(228, 163, 60, 0.1);
+    border: 1px solid rgba(228, 163, 60, 0.35);
+    border-radius: 12px;
+    padding: 13px 15px;
+    font-size: 13px;
+    line-height: 1.5;
+    margin-bottom: 16px;
+  }
+  .note b {
+    color: var(--shar);
+  }
+  label {
+    display: block;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--sut-dim);
+    margin: 13px 0 5px;
+  }
+  input[type="text"] {
+    width: 100%;
+    background: rgba(143, 199, 222, 0.07);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    color: var(--sut);
+    font-family: var(--body);
+    font-size: 16px;
+    padding: 12px 13px;
+  }
+  input[type="text"]:focus {
+    outline: 2px solid var(--shar);
+    outline-offset: 0;
+  }
+  .keys {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 7px;
+  }
+  .keys button {
+    border: 1px solid var(--line);
+    background: rgba(143, 199, 222, 0.07);
+    color: var(--khadag);
+    font-family: var(--body);
+    font-size: 15px;
+    font-weight: 600;
+    width: 38px;
+    height: 34px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  .keys button:hover {
+    background: rgba(143, 199, 222, 0.16);
+  }
+  .row {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+  }
+  .row button {
+    flex: 1;
+    border: 0;
+    padding: 13px;
+    border-radius: 11px;
+    font-family: var(--body);
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .btn-main {
+    background: var(--shar);
+    color: #0b2138;
+  }
+  .btn-ghost {
+    background: transparent;
+    border: 1px solid var(--line) !important;
+    color: var(--sut);
+  }
+  .wordlist {
+    margin-top: 20px;
+    border-top: 1px solid var(--line);
+    padding-top: 14px;
+  }
+  .wr {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 9px 0;
+    border-bottom: 1px solid rgba(143, 199, 222, 0.09);
+    font-size: 14px;
+  }
+  .wr .e {
+    font-size: 22px;
+    min-width: 28px;
+    text-align: center;
+  }
+  .wr .b {
+    font-weight: 600;
+  }
+  .wr .m {
+    color: var(--sut-dim);
+    font-size: 13px;
+  }
+  .wr .x {
+    margin-left: auto;
+    background: none;
+    border: 0;
+    color: var(--sut-dim);
+    font-size: 19px;
+    cursor: pointer;
+    padding: 2px 6px;
+    line-height: 1;
+  }
+  .wr .x:hover {
+    color: var(--uls);
+  }
+  .fontcheck {
+    margin-top: 18px;
+    border: 1px dashed var(--line);
+    border-radius: 12px;
+    padding: 13px 15px;
+  }
+  .fontcheck .glyphs {
+    font-family: var(--disp);
+    font-size: 26px;
+    letter-spacing: 0.06em;
+    margin: 6px 0 4px;
+  }
+  .fontcheck small {
+    font-size: 12px;
+    color: var(--sut-dim);
+    line-height: 1.5;
+    display: block;
+  }
+  .empty {
+    text-align: center;
+    color: var(--sut-dim);
+    font-size: 14px;
+    padding: 34px 10px;
+    line-height: 1.6;
+  }
+  .hidden {
+    display: none !important;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+
+  /* ---------- том дэлгэц дээр утасны хүрээ ---------- */
+  @media (min-width: 760px) {
+    body {
+      background: #080e16;
+      align-items: center;
+      padding: 26px 0;
+      overflow: hidden;
+    }
+    .shell {
+      width: 390px;
+      height: min(844px, calc(100dvh - 52px));
+      max-width: none;
+      padding: 46px 16px 26px;
+      border-radius: 46px;
+      border: 11px solid #04070c;
+      box-shadow:
+        0 0 0 2px #26364a,
+        0 30px 64px rgba(0, 0, 0, 0.65);
+      background:
+        radial-gradient(120% 60% at 50% -10%, #1d4e7a 0%, transparent 60%),
+        var(--tenger-deep);
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      scrollbar-width: none;
+    }
+    .shell::-webkit-scrollbar {
+      display: none;
+    }
+    .shell::before {
+      /* динамик арал */
+      content: "";
+      position: sticky;
+      top: 2px;
+      z-index: 30;
+      flex: none;
+      width: 104px;
+      height: 28px;
+      margin: -34px auto 8px;
+      background: #04070c;
+      border-radius: 99px;
+    }
+  }
+</style>
+
+<div class="shell">
+  <header class="top">
+    <div class="mark">Буриад үг<small>карт тоглоом · туршилт</small></div>
+    <div class="score" id="score">0<small>оноо</small></div>
+  </header>
+
+  <svg class="yohor" id="yohor" viewBox="0 0 120 120" aria-hidden="true"></svg>
+
+  <nav class="tabs" role="tablist">
+    <button role="tab" aria-selected="true" data-tab="guess">Тааварлах</button>
+    <button role="tab" aria-selected="false" data-tab="pairs">Хос олох</button>
+    <button role="tab" aria-selected="false" data-tab="edit">Үг нэмэх</button>
+  </nav>
+
+  <!-- ============ ТААВАРЛАХ ============ -->
+  <section id="pane-guess">
+    <div class="card">
+      <span class="pict" id="pict"></span>
+      <div class="prompt-lbl" id="promptLbl">Буриадаар</div>
+      <div class="prompt" id="prompt"></div>
+      <div class="hint" id="hint"></div>
+      <button class="sound" id="sound">♪ Дуудлага сонсох</button>
+    </div>
+    <div class="answers" id="answers"></div>
+    <div class="verdict" id="verdict"></div>
+    <button class="next hidden" id="next">Дараагийн үг</button>
+  </section>
+
+  <!-- ============ ХОС ОЛОХ ============ -->
+  <section id="pane-pairs" class="hidden">
+    <div class="grid" id="grid"></div>
+    <button class="next" id="restart" style="margin-top: 16px">
+      Дахин холих
+    </button>
+  </section>
+
+  <!-- ============ ҮГ НЭМЭХ ============ -->
+  <section id="pane-edit" class="hidden">
+    <div class="note">
+      <b>Жишээ өгөгдөл.</b> Аппад одоо байгаа 14 үгийг зөвхөн ажиллагааг үзүүлэх
+      зорилгоор оруулсан. Ашиглахаас өмнө Амин Тоонтогийн хэл шинжээчээр үг
+      бүрийг, ялангуяа аялгууны хувилбарыг заавал баталгаажуулна уу.
+    </div>
+
+    <label for="fB">Буриад үг</label>
+    <input type="text" id="fB" placeholder="жишээ нь: уһан" />
+    <div class="keys" id="keys"></div>
+
+    <label for="fM">Монгол утга</label>
+    <input type="text" id="fM" placeholder="жишээ нь: ус" />
+
+    <label for="fE">Зураг (эможи эсвэл зургийн хаяг)</label>
+    <input type="text" id="fE" placeholder="💧  эсвэл  https://..." />
+
+    <label for="fN"
+      >Тайлбар
+      <span style="text-transform: none; letter-spacing: 0"
+        >— заавал биш</span
+      ></label
+    >
+    <input type="text" id="fN" placeholder="Монгол с → буриад һ" />
+
+    <label for="fA"
+      >Дуудлагын файлын хаяг
+      <span style="text-transform: none; letter-spacing: 0"
+        >— заавал биш</span
+      ></label
+    >
+    <input type="text" id="fA" placeholder="https://.../uhan.m4a" />
+
+    <div class="row">
+      <button class="btn-main" id="add">Үг нэмэх</button>
+      <button class="btn-ghost" id="exp">JSON татах</button>
+      <button class="btn-ghost" id="impBtn">JSON оруулах</button>
+    </div>
+    <input type="file" id="imp" accept=".json" class="hidden" />
+
+    <div class="fontcheck">
+      <div
+        style="
+          font-size: 11px;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+          color: var(--sut-dim);
+        "
+      >
+        Үсгийн шалгалт
+      </div>
+      <div class="glyphs">Үү Өө Һһ Ээ Ёё</div>
+      <small
+        >Дээрх зургаан үсэг дөрвөлжин хайрцаг болж харагдвал энэ төхөөрөмжийн
+        фонт буриад бичигт тохирохгүй байна. Аппыг гаргахын өмнө фонтоо өөрөө
+        хамт суулгах хэрэгтэй.</small
+      >
+    </div>
+
+    <div class="wordlist" id="wordlist"></div>
+  </section>
+</div>
+
+<script>
+  /* ---------------------------------------------------------------
+   ЖИШЭЭ ӨГӨГДӨЛ — хэл шинжээчээр баталгаажуулаагүй байгаа.
+   Бодит контентоор солино.
+----------------------------------------------------------------*/
+  let WORDS = [
+    { b: "эжы", m: "ээж", e: "👩", n: "", a: "" },
+    { b: "аба", m: "аав", e: "👨", n: "", a: "" },
+    { b: "уһан", m: "ус", e: "💧", n: "Монгол с → буриад һ", a: "" },
+    { b: "һара", m: "сар", e: "🌙", n: "Монгол с → буриад һ", a: "" },
+    { b: "загаһан", m: "загас", e: "🐟", n: "Монгол с → буриад һ", a: "" },
+    { b: "үнеэн", m: "үнээ", e: "🐄", n: "", a: "" },
+    { b: "морин", m: "морь", e: "🐎", n: "Үгийн эцсийн н хадгалагдана", a: "" },
+    { b: "хонин", m: "хонь", e: "🐑", n: "Үгийн эцсийн н хадгалагдана", a: "" },
+    {
+      b: "тэмээн",
+      m: "тэмээ",
+      e: "🐫",
+      n: "Үгийн эцсийн н хадгалагдана",
+      a: "",
+    },
+    { b: "шубуун", m: "шувуу", e: "🐦", n: "", a: "" },
+    { b: "модон", m: "мод", e: "🌳", n: "", a: "" },
+    { b: "нохой", m: "нохой", e: "🐕", n: "Хоёр хэлэнд ижил", a: "" },
+    { b: "гэр", m: "гэр", e: "🏠", n: "Хоёр хэлэнд ижил", a: "" },
+    { b: "гал", m: "гал", e: "🔥", n: "Хоёр хэлэнд ижил", a: "" },
+  ];
+
+  const $ = (id) => document.getElementById(id);
+  const ROUND = 10;
+  let score = 0,
+    streak = [],
+    q = null,
+    locked = false,
+    audio = null;
+
+  /* ---------- ёохор бөгж ---------- */
+  function drawRing() {
+    const svg = $("yohor"),
+      R = 48,
+      cx = 60,
+      cy = 60;
+    let h = "";
+    for (let i = 0; i < ROUND; i++) {
+      const a0 = (i / ROUND) * 2 * Math.PI - Math.PI / 2 + 0.07;
+      const a1 = ((i + 1) / ROUND) * 2 * Math.PI - Math.PI / 2 - 0.07;
+      const p = (t) =>
+        `${(cx + R * Math.cos(t)).toFixed(2)} ${(cy + R * Math.sin(t)).toFixed(2)}`;
+      const st = streak[i] === true ? "on" : streak[i] === false ? "miss" : "";
+      h += `<path class="seg ${st}" d="M ${p(a0)} A ${R} ${R} 0 0 1 ${p(a1)}"/>`;
+      const am = (a0 + a1) / 2;
+      h += `<circle class="dot ${streak[i] !== undefined ? "on" : ""}" r="3.4"
+           cx="${(cx + R * Math.cos(am)).toFixed(2)}" cy="${(cy + R * Math.sin(am)).toFixed(2)}"/>`;
+    }
+    h += `<text x="60" y="58">${streak.length}<tspan x="60" dy="15" class="sub">/ ${ROUND}</tspan></text>`;
+    svg.innerHTML = h;
+  }
+
+  /* ---------- тааварлах ---------- */
+  function newQuestion() {
+    if (WORDS.length < 4) {
+      $("pane-guess").innerHTML =
+        '<div class="empty">Тоглохын тулд дор хаяж 4 үг хэрэгтэй.<br>«Үг нэмэх» хэсгээс оруулна уу.</div>';
+      return;
+    }
+    if (streak.length >= ROUND) {
+      streak = [];
+      score = 0;
+      $("yohor").classList.add("done");
+      setTimeout(() => $("yohor").classList.remove("done"), 800);
+    }
+
+    locked = false;
+    const pool = [...WORDS].sort(() => Math.random() - 0.5);
+    const right = pool[0];
+    const toBuriad = Math.random() < 0.45; // чиглэлээ солино
+    const opts = [right, ...pool.slice(1, 4)].sort(() => Math.random() - 0.5);
+    q = { right, toBuriad, opts };
+
+    $("pict").innerHTML = right.e.startsWith("http")
+      ? `<img src="${right.e}" alt="">`
+      : right.e;
+    $("promptLbl").textContent = toBuriad ? "Монголоор" : "Буриадаар";
+    $("prompt").textContent = toBuriad ? right.m : right.b;
+    $("hint").textContent = "";
+    $("verdict").innerHTML = "";
+    $("next").classList.add("hidden");
+
+    const s = $("sound");
+    s.disabled = !right.a;
+    s.textContent = right.a ? "♪ Дуудлага сонсох" : "♪ Дуудлага ороогүй";
+
+    $("answers").innerHTML = "";
+    opts.forEach((o, i) => {
+      const btn = document.createElement("button");
+      btn.className = "ans";
+      btn.innerHTML = `<span class="idx">${i + 1}</span><span>${toBuriad ? o.b : o.m}</span>`;
+      btn.onclick = () => answer(btn, o);
+      $("answers").appendChild(btn);
+    });
+    drawRing();
+  }
+
+  function answer(btn, chosen) {
+    if (locked) return;
+    locked = true;
+    const ok = chosen === q.right;
+    [...$("answers").children].forEach((b, i) => {
+      b.disabled = true;
+      if (q.opts[i] === q.right) b.classList.add("right");
+    });
+    if (!ok) btn.classList.add("wrong");
+
+    if (ok) score += 10;
+    streak.push(ok);
+    $("score").innerHTML = score + "<small>оноо</small>";
+    $("verdict").innerHTML = ok
+      ? `<b style="color:var(--khus)">Зөв</b><p>${q.right.b} — ${q.right.m}${q.right.n ? " · " + q.right.n : ""}</p>`
+      : `<b style="color:var(--uls)">Буруу</b><p>${q.right.b} гэдэг нь ${q.right.m}${q.right.n ? " · " + q.right.n : ""}</p>`;
+    $("next").classList.remove("hidden");
+    drawRing();
+  }
+
+  $("next").onclick = newQuestion;
+  $("sound").onclick = () => {
+    if (!q || !q.right.a) return;
+    if (audio) audio.pause();
+    audio = new Audio(q.right.a);
+    audio.play().catch(() => {
+      $("sound").textContent = "♪ Файл нээгдэхгүй байна";
+    });
+  };
+
+  /* ---------- хос олох ---------- */
+  let flipped = [],
+    busy = false;
+  function buildPairs() {
+    const g = $("grid");
+    if (WORDS.length < 3) {
+      g.innerHTML =
+        '<div class="empty" style="grid-column:1/-1">Дор хаяж 3 үг нэмнэ үү.</div>';
+      return;
+    }
+    const picked = [...WORDS].sort(() => Math.random() - 0.5).slice(0, 6);
+    const cards = [];
+    picked.forEach((w, i) => {
+      cards.push({ id: i, kind: "e", text: w.e });
+      cards.push({ id: i, kind: "b", text: w.b });
+    });
+    cards.sort(() => Math.random() - 0.5);
+    flipped = [];
+    busy = false;
+    g.innerHTML = "";
+    cards.forEach((c) => {
+      const t = document.createElement("button");
+      t.className = "tile";
+      t.innerHTML = '<span class="back">◈</span>';
+      t.onclick = () => flip(t, c);
+      g.appendChild(t);
+    });
+  }
+  function flip(el, c) {
+    if (busy || el.classList.contains("up") || el.classList.contains("matched"))
+      return;
+    el.classList.add("up");
+    if (c.kind === "e") el.classList.add("emoji");
+    el.textContent = c.text;
+    flipped.push({ el, c });
+    if (flipped.length < 2) return;
+    busy = true;
+    const [a, b] = flipped;
+    if (a.c.id === b.c.id && a.c.kind !== b.c.kind) {
+      setTimeout(() => {
+        a.el.classList.add("matched");
+        b.el.classList.add("matched");
+        a.el.classList.remove("up");
+        b.el.classList.remove("up");
+        flipped = [];
+        busy = false;
+      }, 340);
+    } else {
+      setTimeout(() => {
+        [a, b].forEach((x) => {
+          x.el.classList.remove("up", "emoji");
+          x.el.innerHTML = '<span class="back">◈</span>';
+        });
+        flipped = [];
+        busy = false;
+      }, 900);
+    }
+  }
+  $("restart").onclick = buildPairs;
+
+  /* ---------- редактор ---------- */
+  "ҮӨҺүөһ".split("").forEach((ch) => {
+    const b = document.createElement("button");
+    b.textContent = ch;
+    b.type = "button";
+    b.onclick = () => {
+      const f = $("fB");
+      f.value += ch;
+      f.focus();
+    };
+    $("keys").appendChild(b);
+  });
+
+  function renderList() {
+    const l = $("wordlist");
+    l.innerHTML = `<div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--sut-dim);margin-bottom:6px">Үгийн сан · ${WORDS.length}</div>`;
+    WORDS.forEach((w, i) => {
+      const r = document.createElement("div");
+      r.className = "wr";
+      r.innerHTML = `<span class="e">${w.e.startsWith("http") ? "🖼" : w.e}</span>
+                   <span><span class="b">${w.b}</span><br><span class="m">${w.m}</span></span>
+                   <button class="x" aria-label="устгах">×</button>`;
+      r.querySelector(".x").onclick = () => {
+        WORDS.splice(i, 1);
+        renderList();
+      };
+      l.appendChild(r);
+    });
+  }
+
+  $("add").onclick = () => {
+    const b = $("fB").value.trim(),
+      m = $("fM").value.trim();
+    if (!b || !m) {
+      $("fB").focus();
+      return;
+    }
+    WORDS.push({
+      b,
+      m,
+      e: $("fE").value.trim() || "◈",
+      n: $("fN").value.trim(),
+      a: $("fA").value.trim(),
+    });
+    ["fB", "fM", "fE", "fN", "fA"].forEach((id) => ($(id).value = ""));
+    renderList();
+  };
+
+  $("exp").onclick = () => {
+    const blob = new Blob([JSON.stringify(WORDS, null, 2)], {
+      type: "application/json",
+    });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "buriad-ugs.json";
+    a.click();
+  };
+
+  $("impBtn").onclick = () => $("imp").click();
+  $("imp").onchange = (e) => {
+    const f = e.target.files[0];
+    if (!f) return;
+    const r = new FileReader();
+    r.onload = () => {
+      try {
+        const d = JSON.parse(r.result);
+        if (Array.isArray(d) && d.every((x) => x.b && x.m)) {
+          WORDS = d.map((x) => ({
+            b: x.b,
+            m: x.m,
+            e: x.e || "◈",
+            n: x.n || "",
+            a: x.a || "",
+          }));
+          renderList();
+          newQuestion();
+          buildPairs();
+        } else
+          alert(
+            "Файлын бүтэц таарахгүй байна. Бичлэг бүрд b (буриад) ба m (монгол) талбар байх ёстой.",
+          );
+      } catch {
+        alert("JSON файлыг уншиж чадсангүй.");
+      }
+    };
+    r.readAsText(f);
+  };
+
+  /* ---------- табууд ---------- */
+  document.querySelectorAll(".tabs button").forEach((t) => {
+    t.onclick = () => {
+      document
+        .querySelectorAll(".tabs button")
+        .forEach((x) => x.setAttribute("aria-selected", x === t));
+      ["guess", "pairs", "edit"].forEach((p) =>
+        $("pane-" + p).classList.toggle("hidden", p !== t.dataset.tab),
+      );
+      if (t.dataset.tab === "pairs") buildPairs();
+      if (t.dataset.tab === "edit") renderList();
+    };
+  });
+
+  /* ---------- гарын товчлол ---------- */
+  document.onkeydown = (e) => {
+    if ($("pane-guess").classList.contains("hidden")) return;
+    if (e.key >= "1" && e.key <= "4" && !locked)
+      $("answers").children[+e.key - 1]?.click();
+    if (e.key === "Enter" && locked) $("next").click();
+  };
+
+  newQuestion();
+  renderList();
+</script>
