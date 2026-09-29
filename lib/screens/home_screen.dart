@@ -75,11 +75,11 @@ class HomeScreen extends StatelessWidget {
                 const SizedBox(height: 20),
                 Text('Тоглоом', style: Theme.of(context).textTheme.titleLarge),
                 const SizedBox(height: 10),
-                LayoutBuilder(
-                  builder: (context, constraints) {
-                    final narrow = constraints.maxWidth < 360;
-                    final cards = [
-                      _FeatureCard(
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: _FeatureCard(
                         icon: Icons.quiz_outlined,
                         title: 'Тааварлах',
                         description: '4 сонголтоос зөв хариултыг олно.',
@@ -93,7 +93,10 @@ class HomeScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                      _FeatureCard(
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: _FeatureCard(
                         icon: Icons.grid_view_outlined,
                         title: 'Хос олох',
                         description: 'Эможи болон үгийг хослуулна.',
@@ -107,25 +110,8 @@ class HomeScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                    ];
-                    if (narrow) {
-                      return Column(
-                        children: [
-                          cards.first,
-                          const SizedBox(height: 10),
-                          cards.last,
-                        ],
-                      );
-                    }
-                    return Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(child: cards.first),
-                        const SizedBox(width: 10),
-                        Expanded(child: cards.last),
-                      ],
-                    );
-                  },
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 22),
                 Row(
