@@ -1,7 +1,9 @@
 import 'package:buriad_ug/main.dart';
+import 'package:buriad_ug/auth/auth_gateway.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'support/fake_auth_gateway.dart';
 import 'support/fake_word_store.dart';
 
 void main() {
@@ -23,11 +25,18 @@ void main() {
   });
 
   testWidgets('хоосон үгийн сангийн төлөв харагдана', (tester) async {
+    final auth = FakeAuthGateway(
+      initialUser: const AuthUser(
+        id: 'ТУРШИЛТ-1',
+        email: 'turshilt@example.com',
+        isAdmin: true,
+      ),
+    );
+    addTearDown(auth.dispose);
     await tester.pumpWidget(
-      BuriadUgApp(store: FakeWordStore(), adminMode: true),
+      BuriadUgApp(store: FakeWordStore(), authGateway: auth),
     );
     await tester.pumpAndSettle();
-    await openHome(tester);
     await tester.tap(find.byTooltip('Үгийн сангийн удирдлага'));
     await tester.pumpAndSettle();
 
@@ -36,11 +45,18 @@ void main() {
   });
 
   testWidgets('Ү Ө Һ үсгийг курсорын байрлалд оруулна', (tester) async {
+    final auth = FakeAuthGateway(
+      initialUser: const AuthUser(
+        id: 'ТУРШИЛТ-1',
+        email: 'turshilt@example.com',
+        isAdmin: true,
+      ),
+    );
+    addTearDown(auth.dispose);
     await tester.pumpWidget(
-      BuriadUgApp(store: FakeWordStore(), adminMode: true),
+      BuriadUgApp(store: FakeWordStore(), authGateway: auth),
     );
     await tester.pumpAndSettle();
-    await openHome(tester);
     await tester.tap(find.byTooltip('Үгийн сангийн удирдлага'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Үг нэмэх').first);
@@ -77,6 +93,32 @@ void main() {
       findsOneWidget,
     );
     expect(find.text('Бүртгэлгүйгээр үзэх'), findsOneWidget);
+  });
+
+  testWidgets('зөв мэдээллээр нэвтрээд бүртгэлийн цэс харуулна', (
+    tester,
+  ) async {
+    final auth = FakeAuthGateway();
+    addTearDown(auth.dispose);
+    await tester.pumpWidget(
+      BuriadUgApp(store: FakeWordStore(), authGateway: auth),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Нэвтрэх'));
+    await tester.pumpAndSettle();
+    await tester.enterText(
+      find.widgetWithText(TextFormField, 'И-мэйл'),
+      'turshilt@example.com',
+    );
+    await tester.enterText(
+      find.widgetWithText(TextFormField, 'Нууц үг'),
+      'ТУРШИЛТ-123',
+    );
+    await tester.tap(find.widgetWithText(FilledButton, 'Нэвтрэх'));
+    await tester.pumpAndSettle();
+
+    expect(find.byTooltip('Бүртгэл'), findsOneWidget);
+    expect(find.text('Тоглоом'), findsOneWidget);
   });
 
   testWidgets('хоосон аман зохиолын төлөв харагдана', (tester) async {

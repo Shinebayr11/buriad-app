@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../auth/auth_gateway.dart';
 import '../state/word_controller.dart';
 import '../theme.dart';
 import '../widgets/heritage_frame.dart';
@@ -12,11 +13,17 @@ class HomeScreen extends StatelessWidget {
   const HomeScreen({
     super.key,
     required this.controller,
-    required this.canManageWords,
+    required this.user,
+    required this.onSignOut,
+    required this.onSignIn,
   });
 
   final WordController controller;
-  final bool canManageWords;
+  final AuthUser? user;
+  final Future<void> Function() onSignOut;
+  final VoidCallback onSignIn;
+
+  bool get canManageWords => user?.isAdmin ?? false;
 
   void _open(BuildContext context, Widget screen) {
     Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => screen));
@@ -44,8 +51,9 @@ class HomeScreen extends StatelessWidget {
                   tooltip: 'Үгийн сангийн удирдлага',
                   icon: const Icon(Icons.admin_panel_settings_outlined),
                 ),
+                _accountMenu(),
               ]
-            : null,
+            : [_accountMenu()],
       ),
       body: HeritageFrame(
         child: SafeArea(
@@ -167,6 +175,29 @@ class HomeScreen extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _accountMenu() {
+    if (user == null) {
+      return IconButton(
+        onPressed: onSignIn,
+        tooltip: 'Нэвтрэх',
+        icon: const Icon(Icons.account_circle_outlined),
+      );
+    }
+    return PopupMenuButton<String>(
+      tooltip: 'Бүртгэл',
+      icon: const Icon(Icons.account_circle_outlined),
+      onSelected: (value) {
+        if (value == 'sign_out') onSignOut();
+      },
+      itemBuilder: (context) => [
+        PopupMenuItem(enabled: false, child: Text(user!.email)),
+        if (user!.isAdmin)
+          const PopupMenuItem(enabled: false, child: Text('Админ эрхтэй')),
+        const PopupMenuItem(value: 'sign_out', child: Text('Гарах')),
+      ],
     );
   }
 }

@@ -1,18 +1,31 @@
 import 'package:flutter/material.dart';
 
+import '../auth/auth_gateway.dart';
 import '../theme.dart';
 import '../widgets/heritage_frame.dart';
 import 'auth_screen.dart';
 
 class WelcomeScreen extends StatelessWidget {
-  const WelcomeScreen({super.key, required this.onContinue});
+  const WelcomeScreen({
+    super.key,
+    required this.authGateway,
+    required this.onAuthenticated,
+    required this.onContinueAsGuest,
+  });
 
-  final VoidCallback onContinue;
+  final AuthGateway authGateway;
+  final ValueChanged<AuthUser> onAuthenticated;
+  final VoidCallback onContinueAsGuest;
 
   void _openAuth(BuildContext context, AuthMode mode) {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
-        builder: (_) => AuthScreen(mode: mode, onContinue: onContinue),
+        builder: (_) => AuthScreen(
+          mode: mode,
+          authGateway: authGateway,
+          onAuthenticated: onAuthenticated,
+          onContinueAsGuest: onContinueAsGuest,
+        ),
       ),
     );
   }
@@ -55,7 +68,7 @@ class WelcomeScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 12),
                     TextButton(
-                      onPressed: onContinue,
+                      onPressed: onContinueAsGuest,
                       child: const Text('Бүртгэлгүйгээр үзэх'),
                     ),
                     const SizedBox(height: 24),
