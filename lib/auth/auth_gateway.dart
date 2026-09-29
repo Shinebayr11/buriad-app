@@ -59,6 +59,10 @@ String authFailureMessage(Object error) {
     'invalid_credentials' => 'И-мэйл эсвэл нууц үг буруу байна.',
     'email_not_confirmed' => 'И-мэйл хаягаа эхлээд баталгаажуулна уу.',
     'user_already_exists' => 'Энэ и-мэйлээр бүртгэл үүссэн байна.',
+    'email_provider_disabled' =>
+      'Supabase дээр и-мэйлээр бүртгүүлэх тохиргоо идэвхгүй байна.',
+    'email_address_not_authorized' => 'Энэ и-мэйл рүү баталгаажуулах захиа илгээх эрхгүй байна. SMTP тохиргоог шалгана уу.',
+    'email_address_invalid' => 'И-мэйл хаягаа шалгаад дахин оролдоно уу.',
     'weak_password' => 'Нууц үг хангалттай найдвартай биш байна.',
     'rate_limit' =>
       'Хэт олон оролдлого хийлээ. Түр хүлээгээд дахин оролдоно уу.',

@@ -81,7 +81,10 @@ class SupabaseAuthGateway implements AuthGateway {
     return switch (error.code) {
       'invalid_credentials' => 'invalid_credentials',
       'email_not_confirmed' => 'email_not_confirmed',
-      'user_already_exists' => 'user_already_exists',
+      'email_exists' || 'user_already_exists' => 'user_already_exists',
+      'email_provider_disabled' => 'email_provider_disabled',
+      'email_address_not_authorized' => 'email_address_not_authorized',
+      'email_address_invalid' => 'email_address_invalid',
       'weak_password' => 'weak_password',
       'over_request_rate_limit' || 'over_email_send_rate_limit' => 'rate_limit',
       _ when error.statusCode == null => 'network',

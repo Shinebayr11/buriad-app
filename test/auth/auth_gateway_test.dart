@@ -15,6 +15,14 @@ void main() {
       authFailureMessage(const AuthFailure('user_already_exists')),
       'Энэ и-мэйлээр бүртгэл үүссэн байна.',
     );
+    expect(
+      authFailureMessage(const AuthFailure('email_provider_disabled')),
+      'Supabase дээр и-мэйлээр бүртгүүлэх тохиргоо идэвхгүй байна.',
+    );
+    expect(
+      authFailureMessage(const AuthFailure('email_address_not_authorized')),
+      'Энэ и-мэйл рүү баталгаажуулах захиа илгээх эрхгүй байна. SMTP тохиргоог шалгана уу.',
+    );
   });
 
   test('үл мэдэгдэх алдаанд дотоод мэдээлэл харуулахгүй', () {
