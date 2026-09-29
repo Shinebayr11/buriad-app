@@ -1,0 +1,11 @@
+# Аппын icon — `dart run flutter_launcher_icons` гэж ажиллуулна.
+# Эх зургууд assets/icon/ дотор (Pillow скриптээр үүсгэсэн, 1024×1024).
+flutter_launcher_icons:
+  image_path: "assets/icon/icon.png"
+  ios: true
+  remove_alpha_ios: true # App Store: icon-д alpha суваг байж болохгүй
+  android: true
+  min_sdk_android: 21
+  adaptive_icon_background: "assets/icon/icon_bg.png"
+  adaptive_icon_foreground: "assets/icon/icon_fg.png"
+  adaptive_icon_monochrome: "assets/icon/icon_mono.png" # Android 13+ themed icon

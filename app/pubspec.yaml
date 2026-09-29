@@ -1,0 +1,51 @@
+name: buriad_app
+description: "Буриад үг — буриад хэл, аман зохиолын сургалтын апп."
+publish_to: 'none'
+
+# Хувилбар. Дэлгүүрт ачаалах болгонд build дугаар (+ дараах тоо) өснө.
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.13.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  # Хэрэглэгчийн үгийн санг төхөөрөмж дээр хадгална (вэбийн localStorage-ийн үүрэг)
+  shared_preferences: ^2.3.3
+  # Дуудлагын бичлэг тоглуулах
+  audioplayers: ^6.1.0
+  # JSON оруулах — файл сонгох цонх
+  file_picker: ^8.1.6
+  # JSON татах — хуваалцах цонх (Файлд хадгалах, и-мэйл, AirDrop)
+  share_plus: ^10.1.2
+  path_provider: ^2.1.5
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.14.2
+  flutter_native_splash: ^2.4.3
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/data/words.json
+    - assets/data/stories.json
+
+  # Фонтыг багцална — Ү Ө Һ үсэг ямар ч төхөөрөмж дээр зөв гарахын тулд.
+  # Хоёулаа хувьсах (variable) фонт тул нэг файлаас бүх жин гарна.
+  # Onest-ийг сонгосон шалтгаан: Unbounded-д Ү Ө Һ үсэг байхгүй тул буриад үг
+  # хоёр өөр фонтоор холилдож гардаг байсан.
+  fonts:
+    - family: Onest
+      fonts:
+        - asset: assets/fonts/Onest.ttf
+    - family: GolosText
+      fonts:
+        - asset: assets/fonts/GolosText.ttf

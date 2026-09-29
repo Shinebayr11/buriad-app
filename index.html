@@ -189,13 +189,26 @@
 
   /* ---------- card ---------- */
   .card {
-    background: linear-gradient(168deg, #1b4b75 0%, #153c5f 100%);
-    border: 1px solid var(--line);
-    border-radius: 18px;
-    padding: 26px 20px 22px;
+    background: linear-gradient(145deg, #1d527d 0%, #123554 72%);
+    border: 1px solid rgba(228, 163, 60, 0.55);
+    border-radius: 20px;
+    min-height: 330px;
     text-align: center;
     position: relative;
     overflow: hidden;
+    perspective: 1000px;
+    cursor: pointer;
+  }
+  .card:not(.can-flip) {
+    cursor: default;
+  }
+  .card::before {
+    content: "";
+    position: absolute;
+    inset: 7px;
+    border: 1px solid rgba(143, 199, 222, 0.2);
+    border-radius: 14px;
+    pointer-events: none;
   }
   .card::after {
     /* алхан хээ — buriad meander, quiet corner motif */
@@ -211,17 +224,122 @@
       linear-gradient(var(--khadag), var(--khadag)) 18px 18px/100% 5px no-repeat,
       linear-gradient(var(--khadag), var(--khadag)) 18px 18px/5px 100% no-repeat;
   }
+  .card-inner {
+    min-height: 330px;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.55s ease;
+  }
+  .card.is-flipped .card-inner {
+    transform: rotateY(180deg);
+  }
+  .card-face {
+    position: absolute;
+    inset: 0;
+    padding: 14px 14px 18px;
+    backface-visibility: hidden;
+  }
+  .card-front {
+    display: flex;
+    flex-direction: column;
+  }
+  .card-back {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transform: rotateY(180deg);
+  }
+  .card-back-label {
+    color: var(--khadag);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .card-back-word {
+    margin-top: 14px;
+    color: var(--shar);
+    font-family: var(--disp);
+    font-size: 30px;
+    font-weight: 600;
+    word-break: break-word;
+  }
+  .card-back-pict {
+    width: 76px;
+    height: 76px;
+    margin-bottom: 14px;
+    border: 1px solid rgba(228, 163, 60, 0.55);
+    border-radius: 50%;
+    background: rgba(8, 30, 50, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 38px;
+  }
+  .card-back-pict img {
+    width: 62px;
+    height: 62px;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+  .card-back-buriad {
+    margin-top: 8px;
+    color: var(--sut-dim);
+    font-size: 14px;
+  }
+  .card-head,
+  .card-body,
+  .card-foot {
+    position: relative;
+    z-index: 1;
+  }
+  .card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2px 4px 12px;
+    border-bottom: 1px solid rgba(143, 199, 222, 0.18);
+  }
+  .card-series,
+  .card-number {
+    font-size: 10px;
+    color: var(--khadag);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .card-series {
+    font-weight: 700;
+  }
+  .card-number {
+    color: var(--shar);
+    font-family: var(--disp);
+  }
+  .card-body {
+    padding: 20px 6px 8px;
+  }
   .pict {
-    font-size: 62px;
+    width: 110px;
+    height: 110px;
+    margin: 0 auto 17px;
+    border: 1px solid rgba(228, 163, 60, 0.55);
+    border-radius: 50%;
+    background: rgba(8, 30, 50, 0.35);
+    box-shadow: inset 0 0 0 7px rgba(143, 199, 222, 0.06);
+    font-size: 54px;
     line-height: 1;
-    margin-bottom: 12px;
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .pict:empty {
+    display: none;
   }
   .pict img {
-    width: 132px;
-    height: 132px;
+    width: 88px;
+    height: 88px;
     object-fit: cover;
-    border-radius: 12px;
+    border-radius: 50%;
   }
   .prompt-lbl {
     font-size: 10px;
@@ -261,6 +379,27 @@
     color: var(--sut-dim);
     cursor: default;
     opacity: 0.6;
+  }
+  .card-back .card-foot {
+    position: absolute;
+    bottom: 18px;
+    left: 14px;
+    width: calc(100% - 28px);
+  }
+  .card-foot {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 32px;
+    margin-top: auto;
+    padding: 4px 8px;
+    color: var(--sut-dim);
+    font-size: 11px;
+    line-height: 1.35;
+    text-align: center;
+  }
+  .card-foot:empty {
+    display: none;
   }
 
   /* ---------- answers ---------- */
@@ -541,6 +680,11 @@
     padding: 34px 10px;
     line-height: 1.6;
   }
+  .loading {
+    text-align: center;
+    color: var(--sut-dim);
+    padding: 34px 10px;
+  }
   .hidden {
     display: none !important;
   }
@@ -596,6 +740,7 @@
 </style>
 
 <div class="shell">
+  <div class="loading" id="loading" aria-live="polite">Ачааллаж байна...</div>
   <header class="top">
     <div class="mark">Буриад үг<small>карт тоглоом · туршилт</small></div>
     <div class="score" id="score">0<small>оноо</small></div>
@@ -611,12 +756,36 @@
 
   <!-- ============ ТААВАРЛАХ ============ -->
   <section id="pane-guess">
-    <div class="card">
-      <span class="pict" id="pict"></span>
-      <div class="prompt-lbl" id="promptLbl">Буриадаар</div>
-      <div class="prompt" id="prompt"></div>
-      <div class="hint" id="hint"></div>
-      <button class="sound" id="sound">♪ Дуудлага сонсох</button>
+    <div
+      class="card"
+      id="flashcard"
+      role="button"
+      tabindex="0"
+      aria-label="Карт эргүүлэх"
+    >
+      <div class="card-inner">
+        <div class="card-face card-front">
+          <div class="card-head">
+            <span class="card-series">Буриад хэлний карт</span>
+            <span class="card-number">01</span>
+          </div>
+          <div class="card-body">
+            <span class="pict" id="pict"></span>
+            <div class="prompt-lbl" id="promptLbl">Буриадаар</div>
+            <div class="prompt" id="prompt"></div>
+            <div class="hint" id="hint"></div>
+            <button class="sound" id="sound">♪ Дуудлага сонсох</button>
+          </div>
+          <div class="card-foot" id="cardHint"></div>
+        </div>
+        <div class="card-face card-back">
+          <span class="card-back-pict" id="backPict"></span>
+          <div class="card-back-label" id="backLabel">Монгол утга</div>
+          <div class="card-back-word" id="backWord"></div>
+          <div class="card-back-buriad" id="backBuriad"></div>
+          <div class="card-foot">Буцааж дараад үргэлжлүүлнэ үү</div>
+        </div>
+      </div>
     </div>
     <div class="answers" id="answers"></div>
     <div class="verdict" id="verdict"></div>
@@ -695,35 +864,29 @@
   </section>
 </div>
 
-<script>
+<script type="module">
   /* ---------------------------------------------------------------
+   Үгийн сангийн эх файл: src/data/words.json
    ЖИШЭЭ ӨГӨГДӨЛ — хэл шинжээчээр баталгаажуулаагүй байгаа.
    Бодит контентоор солино.
 ----------------------------------------------------------------*/
-  let WORDS = [
-    { b: "эжы", m: "ээж", e: "👩", n: "", a: "" },
-    { b: "аба", m: "аав", e: "👨", n: "", a: "" },
-    { b: "уһан", m: "ус", e: "💧", n: "Монгол с → буриад һ", a: "" },
-    { b: "һара", m: "сар", e: "🌙", n: "Монгол с → буриад һ", a: "" },
-    { b: "загаһан", m: "загас", e: "🐟", n: "Монгол с → буриад һ", a: "" },
-    { b: "үнеэн", m: "үнээ", e: "🐄", n: "", a: "" },
-    { b: "морин", m: "морь", e: "🐎", n: "Үгийн эцсийн н хадгалагдана", a: "" },
-    { b: "хонин", m: "хонь", e: "🐑", n: "Үгийн эцсийн н хадгалагдана", a: "" },
-    {
-      b: "тэмээн",
-      m: "тэмээ",
-      e: "🐫",
-      n: "Үгийн эцсийн н хадгалагдана",
-      a: "",
-    },
-    { b: "шубуун", m: "шувуу", e: "🐦", n: "", a: "" },
-    { b: "модон", m: "мод", e: "🌳", n: "", a: "" },
-    { b: "нохой", m: "нохой", e: "🐕", n: "Хоёр хэлэнд ижил", a: "" },
-    { b: "гэр", m: "гэр", e: "🏠", n: "Хоёр хэлэнд ижил", a: "" },
-    { b: "гал", m: "гал", e: "🔥", n: "Хоёр хэлэнд ижил", a: "" },
-  ];
+  import WORDS_DATA from "./app/assets/data/words.json";
+
+  let WORDS = [];
 
   const $ = (id) => document.getElementById(id);
+
+  /* Гаднаас ирсэн бичлэгийг апп доторх нэгдсэн хэлбэрт оруулна */
+  const normalize = (list) =>
+    list.map((x) => ({
+      b: x.b,
+      m: x.m,
+      e: x.e || "◈",
+      n: x.n || "",
+      a: x.a || "",
+    }));
+
+  const isWordList = (d) => Array.isArray(d) && d.every((x) => x.b && x.m);
   const ROUND = 10;
   let score = 0,
     streak = [],
@@ -773,12 +936,21 @@
     const toBuriad = Math.random() < 0.45; // чиглэлээ солино
     const opts = [right, ...pool.slice(1, 4)].sort(() => Math.random() - 0.5);
     q = { right, toBuriad, opts };
+    $("flashcard").classList.remove("is-flipped");
+    $("flashcard").classList.remove("can-flip");
+    $("flashcard").setAttribute("aria-disabled", "true");
+    $("cardHint").textContent = "Хариултаа сонгоно уу";
 
-    $("pict").innerHTML = right.e.startsWith("http")
+    const picture = right.e.startsWith("http")
       ? `<img src="${right.e}" alt="">`
       : right.e;
+    $("pict").innerHTML = "";
+    $("backPict").innerHTML = picture;
     $("promptLbl").textContent = toBuriad ? "Монголоор" : "Буриадаар";
     $("prompt").textContent = toBuriad ? right.m : right.b;
+    $("backLabel").textContent = toBuriad ? "Буриад утга" : "Монгол утга";
+    $("backWord").textContent = toBuriad ? right.b : right.m;
+    $("backBuriad").textContent = toBuriad ? right.m : right.b;
     $("hint").textContent = "";
     $("verdict").innerHTML = "";
     $("next").classList.add("hidden");
@@ -799,7 +971,7 @@
   }
 
   function answer(btn, chosen) {
-    if (locked) return;
+    $("cardHint").textContent = "";
     locked = true;
     const ok = chosen === q.right;
     [...$("answers").children].forEach((b, i) => {
@@ -811,6 +983,11 @@
     if (ok) score += 10;
     streak.push(ok);
     $("score").innerHTML = score + "<small>оноо</small>";
+    $("flashcard").classList.add("can-flip");
+    $("flashcard").setAttribute("aria-disabled", "false");
+    $("cardHint").textContent = ok
+      ? "Зөв хариуллаа"
+      : "Энд дарж зөв үгийг харна уу";
     $("verdict").innerHTML = ok
       ? `<b style="color:var(--khus)">Зөв</b><p>${q.right.b} — ${q.right.m}${q.right.n ? " · " + q.right.n : ""}</p>`
       : `<b style="color:var(--uls)">Буруу</b><p>${q.right.b} гэдэг нь ${q.right.m}${q.right.n ? " · " + q.right.n : ""}</p>`;
@@ -819,13 +996,23 @@
   }
 
   $("next").onclick = newQuestion;
-  $("sound").onclick = () => {
+  $("sound").onclick = (e) => {
+    e.stopPropagation();
     if (!q || !q.right.a) return;
     if (audio) audio.pause();
     audio = new Audio(q.right.a);
     audio.play().catch(() => {
       $("sound").textContent = "♪ Файл нээгдэхгүй байна";
     });
+  };
+  $("flashcard").onclick = () => {
+    if (locked) $("flashcard").classList.toggle("is-flipped");
+  };
+  $("flashcard").onkeydown = (e) => {
+    if (locked && (e.key === "Enter" || e.key === " ")) {
+      e.preventDefault();
+      $("flashcard").classList.toggle("is-flipped");
+    }
   };
 
   /* ---------- хос олох ---------- */
@@ -954,14 +1141,8 @@
     r.onload = () => {
       try {
         const d = JSON.parse(r.result);
-        if (Array.isArray(d) && d.every((x) => x.b && x.m)) {
-          WORDS = d.map((x) => ({
-            b: x.b,
-            m: x.m,
-            e: x.e || "◈",
-            n: x.n || "",
-            a: x.a || "",
-          }));
+        if (isWordList(d)) {
+          WORDS = normalize(d);
           renderList();
           newQuestion();
           buildPairs();
@@ -998,6 +1179,17 @@
     if (e.key === "Enter" && locked) $("next").click();
   };
 
-  newQuestion();
-  renderList();
+  /* ---------- эхлүүлэх ---------- */
+  function loadWords() {
+    if (!isWordList(WORDS_DATA)) {
+      $("loading").textContent = "Үгийн санг уншиж чадсангүй.";
+      return;
+    }
+    WORDS = normalize(WORDS_DATA);
+    $("loading").classList.add("hidden");
+    newQuestion();
+    renderList();
+  }
+
+  loadWords();
 </script>
