@@ -72,12 +72,9 @@ class HomeScreen extends StatelessWidget {
                   icon: const Icon(Icons.menu_book_outlined),
                   label: const Text('Үгийн сан үзэх'),
                 ),
-                const SizedBox(height: 28),
-                Text(
-                  'Тоглоом',
-                  style: Theme.of(context).textTheme.headlineMedium,
-                ),
-                const SizedBox(height: 14),
+                const SizedBox(height: 20),
+                Text('Тоглоом', style: Theme.of(context).textTheme.titleLarge),
+                const SizedBox(height: 10),
                 LayoutBuilder(
                   builder: (context, constraints) {
                     final narrow = constraints.maxWidth < 360;
@@ -115,7 +112,7 @@ class HomeScreen extends StatelessWidget {
                       return Column(
                         children: [
                           cards.first,
-                          const SizedBox(height: 12),
+                          const SizedBox(height: 10),
                           cards.last,
                         ],
                       );
@@ -124,13 +121,13 @@ class HomeScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(child: cards.first),
-                        const SizedBox(width: 12),
+                        const SizedBox(width: 10),
                         Expanded(child: cards.last),
                       ],
                     );
                   },
                 ),
-                const SizedBox(height: 28),
+                const SizedBox(height: 22),
                 Row(
                   children: [
                     Expanded(
@@ -282,17 +279,18 @@ class _FeatureCard extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
         child: Padding(
-          padding: const EdgeInsets.all(18),
+          padding: const EdgeInsets.all(14),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(icon, color: AppColors.shar, size: 34),
-              const SizedBox(height: 16),
-              Text(title, style: Theme.of(context).textTheme.titleLarge),
-              const SizedBox(height: 6),
+              Icon(icon, color: AppColors.shar, size: 28),
+              const SizedBox(height: 10),
+              Text(title, style: Theme.of(context).textTheme.titleMedium),
+              const SizedBox(height: 4),
               Text(
                 description,
-                style: const TextStyle(color: AppColors.sutDim),
+                style: Theme.of(context).textTheme.bodySmall
+                    ?.copyWith(color: AppColors.sutDim, height: 1.25),
               ),
             ],
           ),
