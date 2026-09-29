@@ -8,6 +8,7 @@ import 'memory_screen.dart';
 import 'quiz_screen.dart';
 import 'story_list_screen.dart';
 import 'word_admin_screen.dart';
+import 'word_list_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({
@@ -64,6 +65,13 @@ class HomeScreen extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(16, 18, 16, 32),
               children: [
                 _Stats(wordCount: controller.words.length),
+                const SizedBox(height: 12),
+                FilledButton.icon(
+                  onPressed: () =>
+                      _open(context, WordListScreen(controller: controller)),
+                  icon: const Icon(Icons.menu_book_outlined),
+                  label: const Text('Үгийн сан үзэх'),
+                ),
                 const SizedBox(height: 28),
                 Text(
                   'Тоглоом',

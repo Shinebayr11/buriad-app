@@ -398,7 +398,7 @@ class _WordFormDialogState extends State<WordFormDialog> {
               TextFormField(
                 controller: _verifiedBy,
                 decoration: const InputDecoration(
-                  labelText: 'Баталгаажуулсан хүн',
+                  labelText: 'Баталгаажуулсан хүн эсвэл эх сурвалж',
                 ),
               ),
               const SizedBox(height: 24),

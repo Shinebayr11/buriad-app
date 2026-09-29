@@ -2,6 +2,7 @@ import 'package:buriad_ug/main.dart';
 import 'package:buriad_ug/auth/auth_gateway.dart';
 import 'package:buriad_ug/data/story_repository.dart';
 import 'package:buriad_ug/models/story.dart';
+import 'package:buriad_ug/models/word_entry.dart';
 import 'package:buriad_ug/screens/story_list_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -83,6 +84,36 @@ void main() {
     expect(find.text('Үгийн сангийн удирдлага'), findsNothing);
   });
 
+  testWidgets('энгийн хэрэглэгч үгийн санг уншиж хайна', (tester) async {
+    await tester.pumpWidget(
+      BuriadUgApp(
+        store: FakeWordStore(const [
+          WordEntry(
+            buriad: 'ТУРШИЛТ-1',
+            mongolian: 'туршилт 1',
+            source: 'https://example.com',
+            verifiedBy: 'ТУРШИЛТ-1',
+          ),
+        ]),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await openHome(tester);
+    await tester.tap(find.text('Үгийн сан үзэх'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('ТУРШИЛТ-1'), findsOneWidget);
+    expect(find.text('туршилт 1'), findsOneWidget);
+    expect(find.text('Эх сурвалжийг нээх'), findsOneWidget);
+
+    await tester.enterText(
+      find.widgetWithText(TextField, 'Үг, тайлбараар хайх'),
+      'ИЛРЭХГҮЙ',
+    );
+    await tester.pump();
+    expect(find.text('Илэрц олдсонгүй'), findsOneWidget);
+  });
+
   testWidgets('нэвтрэх маягт буруу утгыг тайлбарлана', (tester) async {
     await tester.pumpWidget(BuriadUgApp(store: FakeWordStore()));
     await tester.pumpAndSettle();
@@ -161,7 +192,10 @@ void main() {
     await tester.pumpWidget(BuriadUgApp(store: FakeWordStore()));
     await tester.pumpAndSettle();
     await openHome(tester);
-    await tester.tap(find.text('Үлгэр'));
+    final storyButton = find.text('Үлгэр');
+    await tester.ensureVisible(storyButton);
+    await tester.pumpAndSettle();
+    await tester.tap(storyButton);
     await tester.pumpAndSettle();
 
     expect(find.text('Нийтлэх бичлэг алга'), findsOneWidget);
