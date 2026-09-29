@@ -5,6 +5,7 @@ import '../theme.dart';
 import '../widgets/heritage_frame.dart';
 import 'memory_screen.dart';
 import 'quiz_screen.dart';
+import 'story_list_screen.dart';
 import 'word_admin_screen.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -106,7 +107,7 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ),
                     TextButton(
-                      onPressed: () => _emptyArchive(context),
+                      onPressed: () => _open(context, const StoryListScreen()),
                       child: const Text('Бүгдийг үзэх'),
                     ),
                   ],
@@ -129,7 +130,10 @@ class HomeScreen extends StatelessWidget {
                       _GenreCard(
                         title: genre.$1,
                         icon: genre.$2,
-                        onTap: () => _emptyArchive(context),
+                        onTap: () => _open(
+                          context,
+                          StoryListScreen(genre: genre.$1.toLowerCase()),
+                        ),
                       ),
                   ],
                 ),
@@ -143,14 +147,6 @@ class HomeScreen extends StatelessWidget {
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  void _emptyArchive(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Нийтлэх зөвшөөрөлтэй бичлэг одоогоор алга.'),
       ),
     );
   }

@@ -66,6 +66,16 @@ void main() {
     expect(find.text('Бүртгэлгүйгээр үзэх'), findsOneWidget);
   });
 
+  testWidgets('хоосон аман зохиолын төлөв харагдана', (tester) async {
+    await tester.pumpWidget(BuriadUgApp(store: FakeWordStore()));
+    await tester.pumpAndSettle();
+    await openHome(tester);
+    await tester.tap(find.text('Бүгдийг үзэх'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Нийтлэх бичлэг алга'), findsOneWidget);
+  });
+
   testWidgets('320 өргөн ба том текстэд нүүр дэлгэц эвдрэхгүй', (tester) async {
     tester.view.physicalSize = const Size(320, 700);
     tester.view.devicePixelRatio = 1;
