@@ -56,6 +56,24 @@ void main() {
     expect(snapshot.words, hasLength(1));
     expect(snapshot.words.single.mongolian, 'туршилт 1');
   });
+
+  test('өмнөх жишээ үгийн хувилбарт шинэ багцыг нэмнэ', () async {
+    SharedPreferences.setMockInitialValues({
+      'word_store_v1': '[]',
+      'word_seed_version': 1,
+    });
+    final store = SharedPreferencesWordStore(
+      bundle: _StringBundle(
+        jsonEncode([
+          {'b': 'ТУРШИЛТ-1', 'm': 'туршилт 1'},
+        ]),
+      ),
+    );
+
+    final snapshot = await store.load();
+
+    expect(snapshot.words, hasLength(1));
+  });
 }
 
 class _StringBundle extends CachingAssetBundle {

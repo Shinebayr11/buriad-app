@@ -11,7 +11,8 @@ class SharedPreferencesWordStore implements WordStore {
 
   static const _storageKey = 'word_store_v1';
   static const _seedVersionKey = 'word_seed_version';
-  static const _currentSeedVersion = 1;
+  static const _currentSeedVersion = 2;
+  static const _versionOneSeedWords = {'алмаг', 'боори', 'басаган'};
   final AssetBundle bundle;
 
   @override
@@ -33,7 +34,12 @@ class SharedPreferencesWordStore implements WordStore {
       return WordStoreSnapshot(words: stored.words, skipped: stored.skipped);
     }
 
-    final words = _mergeSeedWords(bundled.words, stored.words);
+    final seedWords = seedVersion == 1
+        ? bundled.words
+              .where((word) => !_versionOneSeedWords.contains(word.buriad))
+              .toList(growable: false)
+        : bundled.words;
+    final words = _mergeSeedWords(seedWords, stored.words);
     final didSave = await preferences.setString(
       _storageKey,
       encodeWords(words),
