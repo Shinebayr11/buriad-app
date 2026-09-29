@@ -29,6 +29,9 @@ class _AuthScreenState extends State<AuthScreen> {
   final _password = TextEditingController();
   bool _obscurePassword = true;
   bool _loading = false;
+  bool _resending = false;
+  bool _confirmationResent = false;
+  String? _confirmationEmail;
 
   @override
   void dispose() {
@@ -52,6 +55,10 @@ class _AuthScreenState extends State<AuthScreen> {
             );
       if (!mounted) return;
       if (result.emailConfirmationRequired) {
+        setState(() {
+          _confirmationEmail = _email.text.trim();
+          _confirmationResent = false;
+        });
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text(
@@ -69,6 +76,30 @@ class _AuthScreenState extends State<AuthScreen> {
       }
     } finally {
       if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  Future<void> _resendConfirmation() async {
+    final email = _confirmationEmail;
+    if (email == null || _resending) return;
+    setState(() => _resending = true);
+    try {
+      await widget.authGateway.resendSignupConfirmation(email: email);
+      if (!mounted) return;
+      setState(() => _confirmationResent = true);
+      final messenger = ScaffoldMessenger.of(context);
+      messenger.hideCurrentSnackBar();
+      messenger.showSnackBar(
+        const SnackBar(
+          content: Text('Баталгаажуулах и-мэйлийг дахин илгээлээ.'),
+        ),
+      );
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(authFailureMessage(error))));
+    } finally {
+      if (mounted) setState(() => _resending = false);
     }
   }
 
@@ -157,6 +188,30 @@ class _AuthScreenState extends State<AuthScreen> {
                               )
                             : Text(registering ? 'Бүртгүүлэх' : 'Нэвтрэх'),
                       ),
+                      if (_confirmationEmail != null) ...[
+                        const SizedBox(height: 12),
+                        Text(
+                          _confirmationResent
+                              ? 'Баталгаажуулах и-мэйлийг дахин илгээлээ.'
+                              : 'И-мэйлээ баталгаажуулаад нэвтэрнэ үү.',
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 8),
+                        OutlinedButton.icon(
+                          onPressed: _resending ? null : _resendConfirmation,
+                          icon: _resending
+                              ? const SizedBox.square(
+                                  dimension: 18,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : const Icon(Icons.mark_email_unread_outlined),
+                          label: const Text(
+                            'Баталгаажуулах и-мэйлийг дахин илгээх',
+                          ),
+                        ),
+                      ],
                       const SizedBox(height: 12),
                       TextButton(
                         onPressed: _loading ? null : widget.onContinueAsGuest,

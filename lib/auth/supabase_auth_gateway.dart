@@ -2,6 +2,8 @@ import 'package:supabase_flutter/supabase_flutter.dart' hide AuthUser;
 
 import 'auth_gateway.dart';
 
+const _authCallbackUrl = 'buriadug://login-callback/';
+
 class SupabaseAuthGateway implements AuthGateway {
   SupabaseAuthGateway(this._client);
 
@@ -45,10 +47,26 @@ class SupabaseAuthGateway implements AuthGateway {
       final response = await _client.auth.signUp(
         email: email,
         password: password,
+        emailRedirectTo: _authCallbackUrl,
       );
       return AuthSubmission(
         user: response.session == null ? null : _mapUser(response.user),
         emailConfirmationRequired: response.session == null,
+      );
+    } on AuthException catch (error) {
+      throw AuthFailure(_errorCode(error));
+    } catch (_) {
+      throw const AuthFailure('network');
+    }
+  }
+
+  @override
+  Future<void> resendSignupConfirmation({required String email}) async {
+    try {
+      await _client.auth.resend(
+        type: OtpType.signup,
+        email: email,
+        emailRedirectTo: _authCallbackUrl,
       );
     } on AuthException catch (error) {
       throw AuthFailure(_errorCode(error));

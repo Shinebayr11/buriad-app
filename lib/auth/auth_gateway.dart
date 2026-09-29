@@ -47,6 +47,8 @@ abstract interface class AuthGateway {
     required String password,
   });
 
+  Future<void> resendSignupConfirmation({required String email});
+
   Future<void> signOut();
 }
 

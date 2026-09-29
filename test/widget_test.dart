@@ -121,6 +121,38 @@ void main() {
     expect(find.text('Тоглоом'), findsOneWidget);
   });
 
+  testWidgets('баталгаажуулах и-мэйлийг дахин илгээнэ', (tester) async {
+    final auth = FakeAuthGateway(confirmationRequired: true);
+    addTearDown(auth.dispose);
+    await tester.pumpWidget(
+      BuriadUgApp(store: FakeWordStore(), authGateway: auth),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Бүртгүүлэх'));
+    await tester.pumpAndSettle();
+    await tester.enterText(
+      find.widgetWithText(TextFormField, 'И-мэйл'),
+      'turshilt@example.com',
+    );
+    await tester.enterText(
+      find.widgetWithText(TextFormField, 'Нууц үг'),
+      'ТУРШИЛТ-123',
+    );
+    await tester.tap(find.widgetWithText(FilledButton, 'Бүртгүүлэх'));
+    await tester.pumpAndSettle();
+
+    final resendButton = find.text('Баталгаажуулах и-мэйлийг дахин илгээх');
+    expect(resendButton, findsOneWidget);
+    await tester.tap(resendButton);
+    await tester.pump(const Duration(seconds: 1));
+
+    expect(auth.lastResendEmail, 'turshilt@example.com');
+    expect(
+      find.text('Баталгаажуулах и-мэйлийг дахин илгээлээ.'),
+      findsOneWidget,
+    );
+  });
+
   testWidgets('хоосон аман зохиолын төлөв харагдана', (tester) async {
     await tester.pumpWidget(BuriadUgApp(store: FakeWordStore()));
     await tester.pumpAndSettle();

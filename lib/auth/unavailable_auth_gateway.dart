@@ -25,5 +25,9 @@ class UnavailableAuthGateway implements AuthGateway {
   }) => throw const AuthFailure('not_configured');
 
   @override
+  Future<void> resendSignupConfirmation({required String email}) =>
+      throw const AuthFailure('not_configured');
+
+  @override
   Future<void> signOut() async {}
 }

@@ -10,6 +10,7 @@ class FakeAuthGateway implements AuthGateway {
   AuthUser? _currentUser;
   bool confirmationRequired;
   Object? nextError;
+  String? lastResendEmail;
 
   @override
   bool get available => true;
@@ -39,6 +40,12 @@ class FakeAuthGateway implements AuthGateway {
   }) async {
     _throwNextError();
     return _authenticate(email);
+  }
+
+  @override
+  Future<void> resendSignupConfirmation({required String email}) async {
+    _throwNextError();
+    lastResendEmail = email;
   }
 
   AuthSubmission _authenticate(String email) {
